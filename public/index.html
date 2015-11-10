@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'">
+    <!-- HOLY SHIT THIS ISN'T SECURE -->
+    <link type="text/css" rel="stylesheet" href="styles.css" />
+    <title>StreamIt</title>
+    <script type="text/javascript" src="bower_components/angular/angular.min.js"></script>
+    <script type="text/javascript" src="bower_components/lodash/lodash.js"></script>
+    <script type="text/javascript" src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="scripts/app.js"></script>
+    <script type="text/javascript" src="scripts/broadcast.js"></script>
+    <script type="text/javascript" src="scripts/router.js"></script>
+</head>
+
+<body ng-app="streamit">
+    <div ui-view></div>
+</body>
+
+</html>

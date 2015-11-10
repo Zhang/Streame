@@ -9,14 +9,14 @@ module.exports = function (grunt) {
 
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.initConfig({
-    app: {
-      // configurable paths
-      less: 'less',
+    paths: {
+      public: 'public',
+      less: 'public/less',
+      bower: 'public/bower_components'
     },
-
-    // Make sure code styles are up to par and there are no obvious mistakes
     jshint: {
       options: {
         jshintrc: '.jshintrc',
@@ -30,13 +30,51 @@ module.exports = function (grunt) {
     less: {
       build: {
         files: {
-          'styles.css': '<%= app.less %>/styles/app.less'
+          '<%= paths.public %>/styles.css': '<%= paths.less %>/app.less'
         },
         options: {
           cleancss: true,
           strictMath: true
         }
       }
-    }
+    },
+    htmlbuild: {
+      dist: {
+        src: '<%= paths.public %>/config/index.html',
+        dest: 'public/',
+        options: {
+          beautify: true,
+          scripts: {
+            bower: [
+              '<%= paths.bower %>/angular/angular.min.js',
+              '<%= paths.bower %>/lodash/lodash.js',
+              '<%= paths.bower %>/angular-ui-router/release/angular-ui-router.min.js',
+            ],
+            app: '<%= paths.public %>/scripts/**/*.js'
+          },
+          styles: {
+            app: ['<%= paths.public %>/styles.css']
+          }
+        }
+      }
+    },
+    watch: {
+      scripts: {
+        files: ['public/scripts/**/*.js'],
+        tasks: ['htmlbuild'],
+        options: {
+          spawn: false,
+        }
+      },
+      less: {
+        files: ['<%= paths.less %>/**/*.less'],
+        tasks: ['less:build']
+      },
+      template: {
+        files: 'public/config/index.html',
+        tasks: ['htmlbuild']
+      }
+    },
   });
+
 };
