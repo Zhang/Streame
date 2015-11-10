@@ -13,8 +13,10 @@
   });
 
   app.factory('Socket', function (socketFactory) {
-    return socketFactory({
+    var socket = socketFactory({
       ioSocket: io.connect()
     });
+
+    return socket;
   });
 })();
