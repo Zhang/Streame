@@ -1,8 +1,6 @@
 // Generated on 2015-09-03 using generator-ionic 0.7.3
 'use strict';
 
-var _ = require('lodash');
-var path = require('path');
 var jshint = require('jshint-stylish');
 
 module.exports = function (grunt) {
@@ -15,7 +13,7 @@ module.exports = function (grunt) {
     paths: {
       public: 'public',
       less: 'public/less',
-      bower: 'public/bower_components'
+      bower: 'public/vendor'
     },
     jshint: {
       options: {
@@ -49,8 +47,10 @@ module.exports = function (grunt) {
               '<%= paths.bower %>/angular/angular.min.js',
               '<%= paths.bower %>/lodash/lodash.js',
               '<%= paths.bower %>/angular-ui-router/release/angular-ui-router.min.js',
+              '<%= paths.bower %>/socket.io-client/socket.io.js',
+              '<%= paths.bower %>/angular-socket-io/socket.js'
             ],
-            app: '<%= paths.public %>/scripts/**/*.js'
+            app: '<%= paths.public %>/scripts/**/*.js',
           },
           styles: {
             app: ['<%= paths.public %>/styles.css']

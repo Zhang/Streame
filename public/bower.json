@@ -4,6 +4,7 @@
   "authors": [
     "Zhang <scottzhang235@gmail.com>"
   ],
+  "directory": "vendor/",
   "license": "MIT",
   "ignore": [
     "**/.*",
@@ -14,6 +15,7 @@
   ],
   "dependencies": {
     "angular": "~1.4.7",
+    "angular-socket-io": "~0.7.0",
     "angular-ui-router": "ui-router#~0.2.15",
     "lodash": "~3.10.1"
   }
