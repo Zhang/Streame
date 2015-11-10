@@ -7,10 +7,8 @@ var server = http.createServer(app);
 
 require('./socket.js')(server);
 
-var bodyParser = require('body-parser');
 var config = require('./config');
 
-app.use(bodyParser());
 app.use(express.static(__dirname + '/../public'));
 
 app.get('/', function(req, res) {

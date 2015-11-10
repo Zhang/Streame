@@ -21,6 +21,9 @@
   "globals": {
     "angular": false,
     "cordova": false,
-    "StatusBar": false
+    "StatusBar": false,
+    "_": false,
+    "$": false,
+    "RTCPeerConnection": false
   }
 }
