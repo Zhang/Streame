@@ -3,7 +3,10 @@
 (function() {
   var app = angular.module('streamit.broadcast', []);
 
-  app.controller('BroadcastController', function() {
+  app.controller('BroadcastController', function(Socket) {
+    Socket.on('event', function() {
+      console.log('wtf1');
+    });
   });
 
   app.directive('header', function() {
