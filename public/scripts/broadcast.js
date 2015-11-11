@@ -65,6 +65,14 @@
           });
         });
 
+        Socket.on('remove stream', function(stream) {
+          connection.removeStream('scott');
+        });
+
+        $scope.stopStream = function() {
+          Socket.emit('remove stream', 'scott');
+       };
+
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var context = new AudioContext();
         var gainNode = context.createGain();
@@ -84,6 +92,7 @@
               soundSource.connect(gainNode);
               var destination = context.createMediaStreamDestination();
               soundSource.connect(destination);
+              destination.stream.streamid = 'scott';
               connection.renegotiate(destination.stream, {audio: true, oneway: true});
             });
           });
