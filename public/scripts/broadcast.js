@@ -15,7 +15,7 @@
     };
   });
 
-  app.directive('viewer', function(socketFactory, $stateParams) { //PeerConnection, Socket, preferOpus) {
+  app.directive('viewer', function(socketFactory, $stateParams, $http) { //PeerConnection, Socket, preferOpus) {
     return {
       scope: '=',
       replace: true,
@@ -34,15 +34,15 @@
           video: true
         };
         var MODERATOR_EXTRA = {};
+        var connection = createConnection(MODERATOR_CHANNEL_ID);
 
         function createConnection(channelId) {
-          var connection = new RTCMultiConnection(channelId);
-          connection.body = $('#video-container').get(0);
-          return connection;
+          var c = new RTCMultiConnection(channelId);
+          c.body = $('#video-container').get(0);
+          return c;
         }
 
         Socket.on('create', function() {
-          var connection = createConnection(MODERATOR_CHANNEL_ID);
           connection.session = MODERATOR_SESSION;
           connection.userid = MODERATOR_ID;
           connection.extra = MODERATOR_EXTRA;
@@ -54,8 +54,6 @@
         });
 
         Socket.on('join', function() {
-          var connection = createConnection(MODERATOR_CHANNEL_ID);
-
           connection.join({
             sessionid: MODERATOR_SESSION_ID,
             userid: MODERATOR_ID,
@@ -66,6 +64,31 @@
             }
           });
         });
+
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var context = new AudioContext();
+        var gainNode = context.createGain();
+        gainNode.connect(context.destination);
+        // don't play for self
+        gainNode.gain.value = 0;
+        document.querySelector('input[type=file]').onchange = function() {
+          this.disabled = true;
+          var reader = new FileReader();
+          reader.onload = (function(e) {
+            // Import callback function that provides PCM audio data decoded as an audio buffer
+            context.decodeAudioData(e.target.result, function(buffer) {
+              // Create the sound source
+              var soundSource = context.createBufferSource();
+              soundSource.buffer = buffer;
+              soundSource.start(0, 0 / 1000);
+              soundSource.connect(gainNode);
+              var destination = context.createMediaStreamDestination();
+              soundSource.connect(destination);
+              connection.renegotiate(destination.stream, {audio: true, oneway: true});
+            });
+          });
+          reader.readAsArrayBuffer(this.files[0]);
+        };
 
       //   var sdpConstraints = {
       //     mandatory: {

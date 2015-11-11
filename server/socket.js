@@ -14,12 +14,15 @@ module.exports = function(app) {
       //update to broadcast to specific rooms
       socket.broadcast.emit('message', message);
     });
-
+    socket.on('refresh', function(room) {
+      var nsp = io.of(room);
+      nsp.emit('refresh');
+    });
     socket.on('create or join', function(room) {
       var ONE_USER = 1;
       socket.join(room);
       var createRoom = _.keys(io.nsps['/'].adapter.rooms[room]).length === ONE_USER;
-
+      console.log(room, io.nsps['/'].adapter.rooms);
       if (createRoom) {
         socket.emit('create');
       } else {
