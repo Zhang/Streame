@@ -24,6 +24,9 @@
     "StatusBar": false,
     "_": false,
     "$": false,
-    "RTCPeerConnection": false
+    "RTCPeerConnection": false,
+    "getUserMedia": false,
+    "RTCSessionDescription": false,
+    "PeerConnection": false
   }
 }
