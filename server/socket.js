@@ -15,10 +15,13 @@ module.exports = function(app) {
       socket.broadcast.emit('message', message);
     });
 
-
     socket.on('create or join', function(room) {
+      socket.on('toggleVideo', function(vid) {
+        var nsp = io.of(room);
+        nsp.emit('toggleVideo', vid);
+      });
+
       socket.on('remove stream', function(stream) {
-        console.log('wtf', room);
         var nsp = io.of(room);
         nsp.emit('remove stream', stream);
       });

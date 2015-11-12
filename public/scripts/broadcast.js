@@ -24,6 +24,7 @@
         var Socket = socketFactory({
           ioSocket: io.connect()
         });
+        $scope.useFrame = false;
         Socket.emit('create or join', $stateParams.channel);
 
         var MODERATOR_CHANNEL_ID = $stateParams.channel;
@@ -73,9 +74,16 @@
           Socket.emit('remove stream', 'scott');
         };
 
-        $scope.addVideo = function() {
-          $('#video').attr('src', 'https://vine.co/v/bjHh0zHdgZT/embed/simple');
-          //$('#video').attr('src', 'https://www.youtube.com/embed/-BSlqZYtWzQ?start=400&autoplay=1');
+        Socket.on('toggleVideo', function(video) {
+          $scope.useFrame = video.on;
+          $('#frame-video').attr('src', video.src);
+        });
+        $scope.toggleVideo = function(src) {
+          $scope.useFrame = !$scope.useFrame;
+          Socket.emit('toggleVideo', {
+            on: $scope.useFrame,
+            src: src || ''
+          });
         };
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -97,7 +105,7 @@
               soundSource.connect(gainNode);
               var destination = context.createMediaStreamDestination();
               soundSource.connect(destination);
-              destination.stream.streamid = 'scott';
+              destination.stream.streamid = 'audio-only';
               connection.renegotiate(destination.stream, {audio: true, oneway: true});
             });
           });

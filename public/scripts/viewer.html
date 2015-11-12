@@ -1,9 +1,14 @@
 <div class="viewer">
-  <div class="video-container" id="video-container">
-    <iframe id="video" autoplay></iframe>
+  <div class="vid-container" id="video-container" ng-show="!useFrame">
+  </div>
+  <div class="vid-container" ng-show="useFrame">
+    <iframe id="frame-video" autoplay></iframe>
   </div>
   <input type="file">
   <button ng-click="stopStream()">Stop Stream</button>
-  <button ng-click="addVideo()">Add Video Stream</button>
+  <form ng-submit="toggleVideo(url); url = ''">
+    <input ng-model="url" ng-show="!useFrame" type="text">
+    <button type="submit">{{ useFrame ? 'Stop Video' : 'Show Video' }}</button>
+  </form>
   <div ng-if="rtcUnavailable">RTC unavailable</div>
 </div>
