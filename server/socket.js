@@ -21,6 +21,11 @@ module.exports = function(app) {
         nsp.emit('toggleVideo', vid);
       });
 
+      socket.on('toggleImage', function(img) {
+        var nsp = io.of(room);
+        nsp.emit('toggleImage', img);
+      });
+
       socket.on('remove stream', function(stream) {
         var nsp = io.of(room);
         nsp.emit('remove stream', stream);

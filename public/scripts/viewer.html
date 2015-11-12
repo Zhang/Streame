@@ -1,14 +1,6 @@
 <div class="viewer">
-  <div class="vid-container" id="video-container" ng-show="!useFrame">
-  </div>
-  <div class="vid-container" ng-show="useFrame">
-    <iframe id="frame-video" autoplay></iframe>
-  </div>
-  <input type="file">
-  <button ng-click="stopStream()">Stop Stream</button>
-  <form ng-submit="toggleVideo(url); url = ''">
-    <input ng-model="url" ng-show="!useFrame" type="text">
-    <button type="submit">{{ useFrame ? 'Stop Video' : 'Show Video' }}</button>
-  </form>
+  <main-stream ng-show="displayContent.video" set-id="MAIN_STREAM_ID" socket="socket" on-toggle="toggleDisplay('video', toggleOn)"></main-stream>
+  <video-frame ng-show="displayContent.iframe" set-id="" socket="socket" on-toggle="toggleDisplay('iframe', toggleOn)"></video-frame>
+  <image-frame ng-show="displayContent.image" set-id="" socket="socket" on-toggle="toggleDisplay('image', toggleOn)"></image-frame>
   <div ng-if="rtcUnavailable">RTC unavailable</div>
 </div>

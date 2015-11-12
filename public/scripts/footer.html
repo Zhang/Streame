@@ -1,0 +1,12 @@
+<div class="footer">
+  <input type="file">
+  <button ng-click="stopStream()">Stop Stream</button>
+  <form ng-submit="toggleVideo(url); url = ''">
+    <input ng-model="url" type="text">
+    <button type="submit">Toggle Video</button>
+  </form>
+  <form ng-submit="toggleImage(imgUrl); imgUrl = ''">
+    <input ng-model="imgUrl" type="text">
+    <button type="submit">Toggle Image</button>
+  </form>
+</div>

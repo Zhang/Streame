@@ -2,86 +2,90 @@
 
 (function() {
   var app = angular.module('streamit.broadcast', [
-    'streamit.preferOpus'
+    'streamit.preferOpus',
+    'streamit.embeddedViews'
   ]);
 
-  app.controller('BroadcastController', function() {});
+  app.controller('BroadcastController', function($scope, socketFactory, $stateParams, $timeout) {
+    $scope.MAIN_STREAM_ID = 'video-container';
+    $scope.socket = socketFactory({
+      ioSocket: io.connect()
+    });
+
+    var MODERATOR_CHANNEL_ID = $stateParams.channel;
+    var MODERATOR_SESSION_ID = 'XYZ';
+    var MODERATOR_ID = 'JKL';
+    var MODERATOR_SESSION = {
+      audio: true,
+      video: true
+    };
+    var MODERATOR_EXTRA = {};
+
+    $scope.connection = new RTCMultiConnection(MODERATOR_CHANNEL_ID);
+    $timeout(function() {
+      $scope.connection.body = $('#' + $scope.MAIN_STREAM_ID).get(0);
+
+      $scope.socket.emit('create or join', $stateParams.channel);
+      $scope.socket.on('create', function() {
+        $scope.connection.session = MODERATOR_SESSION;
+        $scope.connection.userid = MODERATOR_ID;
+        $scope.connection.extra = MODERATOR_EXTRA;
+        $scope.connection.open({
+          dontTransmit: true,
+          sessionid: MODERATOR_SESSION_ID,
+          oneway: true
+        });
+      });
+
+      $scope.socket.on('join', function() {
+        $scope.connection.join({
+          sessionid: MODERATOR_SESSION_ID,
+          userid: MODERATOR_ID,
+          extra: MODERATOR_EXTRA,
+          session: {
+            audio: false,
+            video: false
+          }
+        });
+      });
+    }, 1000);
+  });
 
   app.directive('header', function() {
     return {
-      scope: '=',
       replace: true,
-      templateUrl: 'scripts/header.html'
+      template: '<div class="header"><h2 class="title-text">StreamIt</h2></div>'
     };
   });
 
-  app.directive('viewer', function(socketFactory, $stateParams, $http) { //PeerConnection, Socket, preferOpus) {
+  app.directive('footer', function() {
     return {
-      scope: '=',
       replace: true,
-      templateUrl: 'scripts/viewer.html',
+      templateUrl: 'scripts/footer.html',
+      scope: {
+        socket: '=',
+        connection: '='
+      },
       link: function($scope) {
-        var Socket = socketFactory({
-          ioSocket: io.connect()
-        });
-        $scope.useFrame = false;
-        Socket.emit('create or join', $stateParams.channel);
-
-        var MODERATOR_CHANNEL_ID = $stateParams.channel;
-        var MODERATOR_SESSION_ID = 'XYZ';
-        var MODERATOR_ID = 'JKL';
-        var MODERATOR_SESSION = {
-          audio: true,
-          video: true
-        };
-        var MODERATOR_EXTRA = {};
-        var connection = createConnection(MODERATOR_CHANNEL_ID);
-
-        function createConnection(channelId) {
-          var c = new RTCMultiConnection(channelId);
-          c.body = $('#video-container').get(0);
-          return c;
-        }
-
-        Socket.on('create', function() {
-          connection.session = MODERATOR_SESSION;
-          connection.userid = MODERATOR_ID;
-          connection.extra = MODERATOR_EXTRA;
-          connection.open({
-            dontTransmit: true,
-            sessionid: MODERATOR_SESSION_ID,
-            oneway: true
-          });
-        });
-
-        Socket.on('join', function() {
-          connection.join({
-            sessionid: MODERATOR_SESSION_ID,
-            userid: MODERATOR_ID,
-            extra: MODERATOR_EXTRA,
-            session: {
-              audio: false,
-              video: false
-            }
-          });
-        });
-
-        Socket.on('remove stream', function(stream) {
-          connection.removeStream('scott');
+        $scope.socket.on('remove stream', function(stream) {
+          $scope.connection.removeStream('scott');
         });
 
         $scope.stopStream = function() {
-          Socket.emit('remove stream', 'scott');
+          $scope.socket.emit('remove stream', 'scott');
         };
 
-        Socket.on('toggleVideo', function(video) {
-          $scope.useFrame = video.on;
-          $('#frame-video').attr('src', video.src);
-        });
         $scope.toggleVideo = function(src) {
-          $scope.useFrame = !$scope.useFrame;
-          Socket.emit('toggleVideo', {
-            on: $scope.useFrame,
+          $scope.socket.emit('toggleVideo', {
+            on: $scope.displayContent.video,
+            src: src || ''
+          });
+        };
+
+        $scope.toggleImage = function(src) {
+          $scope.toggleDisplay('image', !$scope.displayContent.image);
+          $scope.socket.emit('toggleImage', {
+            on: $scope.displayContent.image,
             src: src || ''
           });
         };
@@ -106,10 +110,40 @@
               var destination = context.createMediaStreamDestination();
               soundSource.connect(destination);
               destination.stream.streamid = 'audio-only';
-              connection.renegotiate(destination.stream, {audio: true, oneway: true});
+              $scope.connection.renegotiate(destination.stream, {audio: true, oneway: true});
             });
           });
           reader.readAsArrayBuffer(this.files[0]);
+        };
+      }
+    };
+  });
+
+  app.directive('viewer', function() { //PeerConnection, Socket, preferOpus) {
+    return {
+      scope: {
+        socket: '=',
+        connection: '='
+      },
+      replace: true,
+      templateUrl: 'scripts/viewer.html',
+      link: function($scope) {
+        $scope.displayContent = {
+          video: true,
+          iframe: false,
+          image: false,
+        };
+        $scope.MAIN_STREAM_ID = 'video-container';
+
+        $scope.toggleDisplay = function(content, toggleOn) {
+          _.each($scope.displayContent, function(v, k) {
+            $scope.displayContent[k] = false;
+          });
+          if (toggleOn) {
+            $scope.displayContent[content] = true;
+          } else {
+            $scope.displayContent.video = true;
+          }
         };
 
       //   var sdpConstraints = {
