@@ -1,1 +1,1 @@
-web: sh install.sh && node server/app.js
+web: node server/app.js
