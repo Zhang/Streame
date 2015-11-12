@@ -1,0 +1,52 @@
+{
+  "name": "rtcmulticonnection",
+  "description": "RTCMultiConnection is a WebRTC JavaScript wrapper library runs top over RTCPeerConnection API to provide multi-session establishment scenarios.",
+  "authors": [
+    {
+      "name": "Muaz Khan",
+      "email": "muazkh@gmail.com",
+      "homepage": "http://www.muazkhan.com/"
+    }
+  ],
+  "main": "./RTCMultiConnection.js",
+  "keywords": [
+    "webrtc",
+    "rtcmulticonnection",
+    "webrtc-library",
+    "library",
+    "javascript",
+    "chrome",
+    "firefox",
+    "opera",
+    "ie",
+    "internet-explorer",
+    "android",
+    "rtcweb",
+    "rtcmulticonnection.js",
+    "multirtc",
+    "webrtc-experiment",
+    "javascript-library",
+    "muaz",
+    "muaz-khan"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/muaz-khan/RTCMultiConnection.git"
+  },
+  "homepage": "http://www.rtcmulticonnection.org",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "test",
+    "tests"
+  ],
+  "_release": "1a7fca7392",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "1a7fca73924a9ed4830bf61d47a3c07b419b404c"
+  },
+  "_source": "git://github.com/muaz-khan/RTCMultiConnection.git",
+  "_target": "*",
+  "_originalSource": "rtcmulticonnection"
+}
