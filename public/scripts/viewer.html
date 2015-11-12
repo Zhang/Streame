@@ -1,8 +1,9 @@
 <div class="viewer">
   <div class="video-container" id="video-container">
-    <!-- <video id="video" autoplay muted></video> -->
+    <iframe id="video" autoplay></iframe>
   </div>
   <input type="file">
-  <button ng-click="stopStream()">Connections</button>
+  <button ng-click="stopStream()">Stop Stream</button>
+  <button ng-click="addVideo()">Add Video Stream</button>
   <div ng-if="rtcUnavailable">RTC unavailable</div>
 </div>

@@ -71,7 +71,11 @@
 
         $scope.stopStream = function() {
           Socket.emit('remove stream', 'scott');
-       };
+        };
+
+        $scope.addVideo = function() {
+          $('#video').attr('src', 'https://www.youtube.com/embed/-BSlqZYtWzQ?start=400&autoplay=1');
+        };
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
         var context = new AudioContext();
