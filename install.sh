@@ -1,6 +1,6 @@
 #! /bin/sh
 
-(npm install)
+(npm install) &
 (cd public && bower install) &
 (cd server && npm install)
 wait
