@@ -74,7 +74,8 @@
         };
 
         $scope.addVideo = function() {
-          $('#video').attr('src', 'https://www.youtube.com/embed/-BSlqZYtWzQ?start=400&autoplay=1');
+          $('#video').attr('src', 'https://vine.co/v/bjHh0zHdgZT/embed/simple');
+          //$('#video').attr('src', 'https://www.youtube.com/embed/-BSlqZYtWzQ?start=400&autoplay=1');
         };
 
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
