@@ -14,13 +14,13 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.4.7",
-    "angular-socket-io": "~0.7.0",
+    "angular": "1.4.7",
+    "angular-socket-io": "0.7.0",
     "angular-ui-router": "ui-router#~0.2.15",
-    "jquery": "~2.1.4",
-    "lodash": "~3.10.1",
+    "jquery": "2.1.4",
+    "lodash": "3.10.1",
     "rtcmulticonnection": "git@github.com:muaz-khan/RTCMultiConnection.git#1a7fca73924a9ed4830bf61d47a3c07b419b404c",
     "socket.io-client": "git@github.com:socketio/socket.io-client.git#d125da3c0fb05c9bc958a501b102f73d0e552a72",
-    "webrtc-adapter": "~0.2.5"
+    "webrtc-adapter": "0.2.5"
   }
 }
