@@ -1,4 +1,5 @@
 <div class="viewer">
+  <div ng-if="overlay" ng-click="toggleDisplay()" class="generic-container-overlay" id="controller-container"></div>
   <main-stream ng-show="displayContent.video" set-id="MAIN_STREAM_ID" socket="socket" on-toggle="toggleDisplay('video', toggleOn)"></main-stream>
   <video-frame ng-show="displayContent.iframe" set-id="" socket="socket" on-toggle="toggleDisplay('iframe', toggleOn)"></video-frame>
   <image-frame ng-show="displayContent.image" set-id="" socket="socket" on-toggle="toggleDisplay('image', toggleOn)"></image-frame>

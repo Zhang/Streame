@@ -11,6 +11,19 @@
 body {
   font-family: 'typefont', 'Helvetica', 'Arial', 'sans-serif';
 }
+.action {
+  cursor: pointer;
+}
+.generic-container-overlay {
+  height: 400px;
+  width: 100%;
+  position: absolute;
+  z-index: 100;
+}
+.generic-container-overlay:hover {
+  background-color: gray;
+  opacity: .1;
+}
 .generic-container {
   margin: 0 auto;
   height: 400px;
@@ -28,4 +41,53 @@ body {
   color: #614471;
   font-size: 28px;
   font-family: 'titlefont';
+}
+.footer-container {
+  height: calc(150px / 1.5);
+  width: 150px;
+  margin: calc(150px / 6) 0;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.add-media {
+  margin: 0 auto;
+  vertical-align: middle;
+}
+.add-icon {
+  background-image: url('fonts/plus-sign.svg');
+  height: 30px;
+  width: 30px;
+  display: block;
+  border-radius: 30px;
+  border: 2px solid gray;
+}
+.footer {
+  border: 1px solid #614471;
+  height: 150px;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+}
+.icon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+.url-input {
+  display: block;
+  margin: 0 auto;
+}
+html {
+  height: 100%;
+}
+body {
+  height: 100%;
+  margin: 0;
+}
+h2.header {
+  padding: 20px;
+  margin: 0;
 }

@@ -1,12 +1,23 @@
 <div class="footer">
-  <input type="file">
-  <button ng-click="stopStream()">Stop Stream</button>
-  <form ng-submit="toggleVideo(url); url = ''">
-    <input ng-model="url" type="text">
-    <button type="submit">Toggle Video</button>
-  </form>
-  <form ng-submit="toggleImage(imgUrl); imgUrl = ''">
-    <input ng-model="imgUrl" type="text">
-    <button type="submit">Toggle Image</button>
-  </form>
+  <div class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+    <div>{{media.url}}</div>
+  </div>
+  <div class="footer-container">
+    <div ng-if="!add" ng-click="toggleAdd()" class="add-media action"><i class="icon add-icon"></i></div>
+    <form ng-if="add">
+      <input class="url-input" ng-model="url" type="text">
+      <button ng-click="addMedia(url, 'toggleVideo'); toggleAdd()" type="submit">youtube</button>
+      <button ng-click="addMedia(url, 'toggleImage'); toggleAdd()" type="submit">img</button>
+    </form>
+  </div>
+  <!--   <input type="file">
+    <button ng-click="stopStream()">Stop Stream</button>
+    <form ng-submit="toggleVideo(url); url = ''">
+      <input ng-model="url" type="text">
+      <button type="submit">Toggle Video</button>
+    </form>
+    <form ng-submit="toggleImage(imgUrl); imgUrl = ''">
+      <input ng-model="imgUrl" type="text">
+      <button type="submit">Toggle Image</button>
+    </form> -->
 </div>

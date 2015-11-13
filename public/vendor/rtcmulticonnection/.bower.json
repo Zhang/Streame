@@ -42,11 +42,10 @@
   ],
   "_release": "1a7fca7392",
   "_resolution": {
-    "type": "branch",
-    "branch": "master",
+    "type": "commit",
     "commit": "1a7fca73924a9ed4830bf61d47a3c07b419b404c"
   },
-  "_source": "git://github.com/muaz-khan/RTCMultiConnection.git",
-  "_target": "*",
-  "_originalSource": "rtcmulticonnection"
+  "_source": "git@github.com:muaz-khan/RTCMultiConnection.git",
+  "_target": "1a7fca73924a9ed4830bf61d47a3c07b419b404c",
+  "_originalSource": "git@github.com:muaz-khan/RTCMultiConnection.git"
 }

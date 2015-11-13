@@ -2,7 +2,6 @@
 
 (function() {
   var app = angular.module('streamit.broadcast', [
-    'streamit.preferOpus',
     'streamit.embeddedViews'
   ]);
 
@@ -67,6 +66,25 @@
         connection: '='
       },
       link: function($scope) {
+        $scope.add = false;
+        $scope.toggleAdd = function() {
+          $scope.add = !$scope.add;
+        };
+
+        $scope.mediaForms = [];
+        $scope.addMedia = function(url, toggleEvent) {
+          $scope.mediaForms.push({
+            url: url,
+            type: toggleEvent,
+            toggle: function() {
+              $scope.socket.emit(toggleEvent, {
+                on: true,
+                src: url || ''
+              });
+            }
+          });
+        };
+
         $scope.socket.on('remove stream', function(stream) {
           $scope.connection.removeStream('scott');
         });
@@ -75,51 +93,36 @@
           $scope.socket.emit('remove stream', 'scott');
         };
 
-        $scope.toggleVideo = function(src) {
-          $scope.socket.emit('toggleVideo', {
-            on: $scope.displayContent.video,
-            src: src || ''
-          });
-        };
-
-        $scope.toggleImage = function(src) {
-          $scope.toggleDisplay('image', !$scope.displayContent.image);
-          $scope.socket.emit('toggleImage', {
-            on: $scope.displayContent.image,
-            src: src || ''
-          });
-        };
-
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        var context = new AudioContext();
-        var gainNode = context.createGain();
-        gainNode.connect(context.destination);
-        // don't play for self
-        gainNode.gain.value = 0;
-        document.querySelector('input[type=file]').onchange = function() {
-          this.disabled = true;
-          var reader = new FileReader();
-          reader.onload = (function(e) {
-            // Import callback function that provides PCM audio data decoded as an audio buffer
-            context.decodeAudioData(e.target.result, function(buffer) {
-              // Create the sound source
-              var soundSource = context.createBufferSource();
-              soundSource.buffer = buffer;
-              soundSource.start(0, 0 / 1000);
-              soundSource.connect(gainNode);
-              var destination = context.createMediaStreamDestination();
-              soundSource.connect(destination);
-              destination.stream.streamid = 'audio-only';
-              $scope.connection.renegotiate(destination.stream, {audio: true, oneway: true});
-            });
-          });
-          reader.readAsArrayBuffer(this.files[0]);
-        };
+        // window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        // var context = new AudioContext();
+        // var gainNode = context.createGain();
+        // gainNode.connect(context.destination);
+        // // don't play for self
+        // gainNode.gain.value = 0;
+        // document.querySelector('input[type=file]').onchange = function() {
+        //   this.disabled = true;
+        //   var reader = new FileReader();
+        //   reader.onload = (function(e) {
+        //     // Import callback function that provides PCM audio data decoded as an audio buffer
+        //     context.decodeAudioData(e.target.result, function(buffer) {
+        //       // Create the sound source
+        //       var soundSource = context.createBufferSource();
+        //       soundSource.buffer = buffer;
+        //       soundSource.start(0, 0 / 1000);
+        //       soundSource.connect(gainNode);
+        //       var destination = context.createMediaStreamDestination();
+        //       soundSource.connect(destination);
+        //       destination.stream.streamid = 'audio-only';
+        //       $scope.connection.renegotiate(destination.stream, {audio: true, oneway: true});
+        //     });
+        //   });
+        //   reader.readAsArrayBuffer(this.files[0]);
+        // };
       }
     };
   });
 
-  app.directive('viewer', function() { //PeerConnection, Socket, preferOpus) {
+  app.directive('viewer', function() { //PeerConnection, Socket) {
     return {
       scope: {
         socket: '=',
@@ -128,11 +131,13 @@
       replace: true,
       templateUrl: 'scripts/viewer.html',
       link: function($scope) {
+        $scope.overlay = false;
         $scope.displayContent = {
           video: true,
           iframe: false,
-          image: false,
+          image: false
         };
+
         $scope.MAIN_STREAM_ID = 'video-container';
 
         $scope.toggleDisplay = function(content, toggleOn) {
@@ -140,8 +145,13 @@
             $scope.displayContent[k] = false;
           });
           if (toggleOn) {
+            $scope.overlay = true;
+            $scope.overlaySignal = content === 'iframe' ? 'toggleVideo' :'toggleImage';
             $scope.displayContent[content] = true;
           } else {
+            $scope.socket.emit($scope.overlaySignal, {});
+            $scope.overlaySignal = '';
+            $scope.overlay = false;
             $scope.displayContent.video = true;
           }
         };
@@ -218,49 +228,6 @@
       //     console.log('getUserMedia error: ', error);
       //   }
       }
-    };
-  });
-
-
-  app.factory('PeerConnection', function(Socket) {
-    function handleIceCandidate(event) {
-      console.log('handleIceCandidate event: ', event);
-
-      if (event.candidate) {
-        Socket.emit('message', {
-          type: 'candidate',
-          label: event.candidate.sdpMLineIndex,
-          id: event.candidate.sdpMid,
-          candidate: event.candidate.candidate
-        });
-      } else {
-        console.log('End of candidates.');
-      }
-    }
-
-
-    function handleRemoteStreamAdded(videoElement) {
-      return function(event) {
-        videoElement.attr('src', window.URL.createObjectURL(event.stream));
-      };
-    }
-
-
-    function handleRemoteStreamRemoved(event) {
-      console.log('Remote stream removed. Event: ', event);
-    }
-
-    return function(videoElement) {
-      var peerConnection;
-      try {
-        peerConnection = new RTCPeerConnection(null);
-        peerConnection.onicecandidate = handleIceCandidate;
-        peerConnection.onaddstream = handleRemoteStreamAdded(videoElement);
-        peerConnection.onremovestream = handleRemoteStreamRemoved;
-      } catch (e) {
-        console.log('unable to create peer connection: ', e);
-      }
-      return peerConnection;
     };
   });
 })();

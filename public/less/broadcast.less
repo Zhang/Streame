@@ -1,6 +1,20 @@
+@footer-height: 150px;
+@generic-height: 400px;
+
+.generic-container-overlay {
+  height: @generic-height;
+  width: 100%;
+  position: absolute;
+  z-index: 100;
+  &:hover {
+    background-color: gray;
+    opacity: .1;
+  }
+}
+
 .generic-container {
   margin: 0 auto;
-  height: 400px;
+  height: @generic-height;
   #frame-video {
     height: 100%;
     width: 100%;
@@ -18,3 +32,43 @@
   font-size: 28px;
   font-family: 'titlefont';
 }
+.footer-container {
+  height: calc(@footer-height ~"/" 1.5);
+  width: @footer-height;
+  margin: calc(@footer-height ~"/" 6) 0;
+  display: inline-block;
+  text-align: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.add-media {
+  margin: 0 auto;
+  vertical-align: middle;
+}
+.add-icon {
+  @icon-size: 30px;
+  background-image: url('fonts/plus-sign.svg');
+  height: @icon-size;
+  width: @icon-size;
+  display: block;
+  border-radius: @icon-size;
+  border: 2px solid gray;
+}
+.footer {
+  border: 1px solid @purple;
+  height: @footer-height;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+}
+.icon {
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+}
+.url-input {
+  display: block;
+  margin: 0 auto;
+}
+
