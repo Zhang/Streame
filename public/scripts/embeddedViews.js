@@ -14,9 +14,6 @@
       },
       link: function($scope, elem) {
         elem.attr('id', $scope.setId);
-        // $scope.onToggle({
-        //   toggleOn: true
-        // });
       }
     };
   });

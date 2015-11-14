@@ -27,6 +27,7 @@
     "RTCPeerConnection": false,
     "getUserMedia": false,
     "RTCSessionDescription": false,
-    "PeerConnection": false
+    "PeerConnection": false,
+    "Peer": false
   }
 }

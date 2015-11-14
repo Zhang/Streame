@@ -50,13 +50,19 @@ module.exports = function (grunt) {
               '<%= paths.bower %>/angular-ui-router/release/angular-ui-router.min.js',
               '<%= paths.bower %>/socket.io-client/socket.io.js',
               '<%= paths.bower %>/angular-socket-io/socket.js',
-              //'<%= paths.bower %>/webrtc-adapter/adapter.js',
+              '<%= paths.bower %>/angular-bootstrap/ui-bootstrap.min.js',
               '<%= paths.bower %>/jquery/dist/jquery.min.js',
+              '<%= paths.bower %>/peerjs/peer.js',
+              '<%= paths.bower %>/angular-uuid4/angular-uuid4.js',
+              '<%= paths.bower %>/webrtc-adapter/adapter.js'
             ],
             app: '<%= paths.public %>/scripts/**/*.js',
           },
           styles: {
-            app: ['<%= paths.public %>/styles.css']
+            app: [
+              '<%= paths.public %>/fonts/bootstrap.min.css',
+              '<%= paths.public %>/styles.css'
+            ]
           }
         }
       }

@@ -15,7 +15,7 @@ body {
   cursor: pointer;
 }
 .generic-container-overlay {
-  height: 400px;
+  height: 100%;
   width: 100%;
   position: absolute;
   z-index: 100;
@@ -24,9 +24,12 @@ body {
   background-color: gray;
   opacity: .1;
 }
+.viewer {
+  height: 300px;
+}
 .generic-container {
   margin: 0 auto;
-  height: 400px;
+  height: 100%;
 }
 .generic-container #frame-video {
   height: 100%;

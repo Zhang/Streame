@@ -2,52 +2,66 @@
 
 (function() {
   var app = angular.module('streamit.broadcast', [
+    'uuid4',
     'streamit.embeddedViews'
   ]);
 
-  app.controller('BroadcastController', function($scope, socketFactory, $stateParams, $timeout) {
+  app.controller('BroadcastController', function($scope, socketFactory, $stateParams, uuid4) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = socketFactory({
       ioSocket: io.connect()
     });
 
-    var MODERATOR_CHANNEL_ID = $stateParams.channel;
-    var MODERATOR_SESSION_ID = 'XYZ';
-    var MODERATOR_ID = 'JKL';
-    var MODERATOR_SESSION = {
-      audio: true,
-      video: true
-    };
-    var MODERATOR_EXTRA = {};
+    var peer = new Peer(uuid4.generate(), {host: 'localhost', port: 8080, path: '/peerjs'});
+    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-    $scope.connection = new RTCMultiConnection(MODERATOR_CHANNEL_ID);
-    $timeout(function() {
-      $scope.connection.body = $('#' + $scope.MAIN_STREAM_ID).get(0);
-
-      $scope.socket.emit('create or join', $stateParams.channel);
-      $scope.socket.on('create', function() {
-        $scope.connection.session = MODERATOR_SESSION;
-        $scope.connection.userid = MODERATOR_ID;
-        $scope.connection.extra = MODERATOR_EXTRA;
-        $scope.connection.open({
-          dontTransmit: true,
-          sessionid: MODERATOR_SESSION_ID,
-          oneway: true
-        });
+    function attachStream(stream, element, opts) {
+      element = element || document.createElement('video');
+      opts = _.defaults(opts || {}, {
+        autoplay: true,
+        muted: false,
+        disableContextMenu: false,
+        attachTo: $('#' + $scope.MAIN_STREAM_ID)
       });
 
-      $scope.socket.on('join', function() {
-        $scope.connection.join({
-          sessionid: MODERATOR_SESSION_ID,
-          userid: MODERATOR_ID,
-          extra: MODERATOR_EXTRA,
-          session: {
-            audio: false,
-            video: false
-          }
+      if (opts.autoplay) {
+        element.autoplay = 'autoplay';
+      }
+
+      if (opts.muted) {
+        element.muted = true;
+      }
+
+      attachMediaStream(element, stream);
+      opts.attachTo.append(element);
+    }
+
+    $scope.socket.emit('create or join', {
+      channel: $stateParams.channel,
+      peerId: peer.id,
+      isBroadcaster: $stateParams.isBroadcaster === '1'
+    });
+
+    $scope.socket.on('create', function() {
+      navigator.getUserMedia({video: true, audio: true}, function(stream) {
+        attachStream(stream, null, {muted: true});
+
+        $scope.socket.on('joined', function(userId) {
+          peer.call(userId, stream);
+        });
+      }, function(err) {
+        console.log('Failed to get local stream', err);
+      });
+    });
+
+    $scope.socket.on('join', function() {
+      peer.on('call', function(call) {
+        call.answer();
+        call.on('stream', function(remoteStream) {
+          attachStream(remoteStream);
         });
       });
-    }, 1000);
+    });
   });
 
   app.directive('header', function() {
@@ -122,7 +136,7 @@
     };
   });
 
-  app.directive('viewer', function() { //PeerConnection, Socket) {
+  app.directive('viewer', function() {
     return {
       scope: {
         socket: '=',
