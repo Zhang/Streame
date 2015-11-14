@@ -4,7 +4,6 @@
   var app = angular.module('streamit', [
     'btford.socket-io',
     'ui.router',
-    'ui.bootstrap',
     'streamit.router',
     'streamit.broadcast'
   ]);

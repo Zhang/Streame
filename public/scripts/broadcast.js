@@ -6,11 +6,9 @@
     'streamit.embeddedViews'
   ]);
 
-  app.controller('BroadcastController', function($scope, socketFactory, $stateParams, uuid4) {
+  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4) {
     $scope.MAIN_STREAM_ID = 'video-container';
-    $scope.socket = socketFactory({
-      ioSocket: io.connect()
-    });
+    $scope.socket = Socket;
 
     var peer = new Peer(uuid4.generate(), {host: 'localhost', port: 8080, path: '/peerjs'});
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
