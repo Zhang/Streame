@@ -3,14 +3,15 @@
 (function() {
   var app = angular.module('streamit.broadcast', [
     'uuid4',
-    'streamit.embeddedViews'
+    'streamit.embeddedViews',
+    'ngCookies'
   ]);
 
-  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4) {
+  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4, $cookies) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
 
-    var peer = new Peer(uuid4.generate(), {host: 'localhost', port: 8080, path: '/peerjs'});
+    var peer = new Peer($cookies.get('cookieId'), {host: 'localhost', port: 8080, path: '/peerjs'});
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
     function attachStream(stream, element, opts) {
@@ -18,7 +19,7 @@
       opts = _.defaults(opts || {}, {
         autoplay: true,
         muted: false,
-        disableContextMenu: false,
+        //disableContextMenu: false,
         attachTo: $('#' + $scope.MAIN_STREAM_ID)
       });
 
@@ -36,11 +37,11 @@
 
     $scope.socket.emit('create or join', {
       channel: $stateParams.channel,
-      peerId: peer.id,
-      isBroadcaster: $stateParams.isBroadcaster === '1'
+      peerId: peer.id
     });
 
-    $scope.socket.on('create', function() {
+    $scope.socket.on('create', function(room) {
+      if (room !== $stateParams.channel) return;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
         attachStream(stream, null, {muted: true});
 
@@ -52,13 +53,15 @@
       });
     });
 
-    $scope.socket.on('join', function() {
+    $scope.socket.on('join', function(room) {
+      if (room !== $stateParams.channel) return;
       peer.on('call', function(call) {
         call.answer();
         call.on('stream', function(remoteStream) {
           attachStream(remoteStream);
         });
       });
+      $scope.socket.emit('add peer', peer.id);
     });
   });
 

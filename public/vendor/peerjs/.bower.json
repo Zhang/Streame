@@ -28,7 +28,6 @@
     "commit": "708cb482682a3c7599dd177090e789722e2b8346"
   },
   "_source": "git://github.com/peers/bower-peerjs.git",
-  "_target": "~0.3.14",
-  "_originalSource": "peerjs",
-  "_direct": true
+  "_target": "0.3.14",
+  "_originalSource": "peerjs"
 }

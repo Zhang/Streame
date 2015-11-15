@@ -52,7 +52,8 @@ module.exports = function (grunt) {
               '<%= paths.bower %>/jquery/dist/jquery.min.js',
               '<%= paths.bower %>/peerjs/peer.js',
               '<%= paths.bower %>/angular-uuid4/angular-uuid4.js',
-              '<%= paths.bower %>/webrtc-adapter/adapter.js'
+              '<%= paths.bower %>/webrtc-adapter/adapter.js',
+              '<%= paths.bower %>/angular-cookies/angular-cookies.js'
             ],
             app: '<%= paths.public %>/scripts/**/*.js',
           },

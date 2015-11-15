@@ -4,14 +4,17 @@ var _ = require('lodash');
 
 module.exports = function(app) {
   var io = require('socket.io')(app);
-  var userId;
-
+  var hosts = {};
   io.on('connection', function(socket) {
     socket.on('message', function (message) {
       socket.broadcast.emit('message', message);
     });
 
+    //need to ensure sockets can only be in one room at a time
     socket.on('create or join', function(req) {
+      socket.on('add peer', function(peerId) {
+        hosts[req.room].socket.emit('joined', peerId);
+      });
       socket.on('toggleVideo', function(vid) {
         var nsp = io.of(req.channel);
         nsp.emit('toggleVideo', vid);
@@ -26,18 +29,21 @@ module.exports = function(app) {
         var nsp = io.of(req.channel);
         nsp.emit('remove stream', stream);
       });
-
       var ONE_USER = 1;
       socket.join(req.channel);
       var newRoom = _.keys(io.nsps['/'].adapter.rooms[req.channel]).length === ONE_USER;
+      var isBroadcaster = _.get(hosts[req.room], 'id') === req.peerId;
+      console.log(hosts[req.room]);
+      console.log(io.nsps['/'].adapter.rooms, req.channel, newRoom, isBroadcaster);
+      if (newRoom || isBroadcaster) {
+        hosts[req.room] = {
+          id: req.peerId,
+          socket: socket
+        };
 
-      if (newRoom || req.isBroadcaster) {
-        userId = req.peerId;
-        socket.emit('create', userId);
-        //socket.broadcast.emit('join', userId);
+        socket.emit('create', req.channel);
       } else {
-        socket.emit('join', req.peerId);
-        socket.broadcast.emit('joined', req.peerId);
+        socket.emit('join', req.channel);
       }
     });
   });
