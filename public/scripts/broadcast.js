@@ -6,13 +6,22 @@
     'streamit.embeddedViews',
     'ngCookies'
   ]);
-
-  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4, $cookies) {
+  app.controller('ModalInstanceCtrl', function(Type, $scope) {
+    $scope.type = Type.text;
+    $scope.submit = function(url) {
+      $scope.$close(url);
+    };
+    $scope.dismiss = function() {
+      $scope.$dismiss();
+    };
+  });
+  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
 
-    var peer = new Peer($cookies.get('cookieId'), {host: 'localhost', port: 8080, path: '/peerjs'});
-    navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+    function removeStream() {
+      $scope.$broadcast('removeStream');
+    }
 
     function attachStream(stream, element, opts) {
       element = element || document.createElement('video');
@@ -20,7 +29,6 @@
         autoplay: true,
         muted: false,
         //disableContextMenu: false,
-        attachTo: $('#' + $scope.MAIN_STREAM_ID)
       });
 
       if (opts.autoplay) {
@@ -32,12 +40,14 @@
       }
 
       attachMediaStream(element, stream);
-      opts.attachTo.append(element);
+      $scope.$broadcast('attachStream', {
+        element: element
+      });
     }
 
     $scope.socket.emit('create or join', {
       channel: $stateParams.channel,
-      peerId: peer.id
+      peerId: PeerConnection.id
     });
 
     $scope.socket.on('create', function(room) {
@@ -46,7 +56,7 @@
         attachStream(stream, null, {muted: true});
 
         $scope.socket.on('joined', function(userId) {
-          peer.call(userId, stream);
+          PeerConnection.call(userId, stream);
         });
       }, function(err) {
         console.log('Failed to get local stream', err);
@@ -55,13 +65,19 @@
 
     $scope.socket.on('join', function(room) {
       if (room !== $stateParams.channel) return;
-      peer.on('call', function(call) {
+      PeerConnection.on('call', function(call) {
         call.answer();
         call.on('stream', function(remoteStream) {
           attachStream(remoteStream);
         });
       });
-      $scope.socket.emit('add peer', peer.id);
+      $scope.socket.emit('add peer', PeerConnection.id);
+    });
+
+    $scope.socket.on('reconnected', function(room) {
+      if (room !== $stateParams.channel) return;
+      removeStream();
+      $scope.socket.emit('add peer', PeerConnection.id);
     });
   });
 
@@ -72,7 +88,7 @@
     };
   });
 
-  app.directive('footer', function() {
+  app.directive('footer', function($uibModal) {
     return {
       replace: true,
       templateUrl: 'scripts/footer.html',
@@ -87,7 +103,7 @@
         };
 
         $scope.mediaForms = [];
-        $scope.addMedia = function(url, toggleEvent) {
+        var addMedia = function(url, toggleEvent) {
           $scope.mediaForms.push({
             url: url,
             type: toggleEvent,
@@ -100,6 +116,24 @@
           });
         };
 
+        $scope.open = function (type, socketEvent) {
+          var modalInstance = $uibModal.open({
+            animation: true,
+            templateUrl: 'scripts/modal.html',
+            controller: 'ModalInstanceCtrl',
+            size: 'sm',
+            scope: $scope,
+            resolve: {
+              Type: {
+                text: type
+              }
+            }
+          });
+
+          modalInstance.result.then(function (url) {
+            addMedia(url, socketEvent);
+          });
+        };
         $scope.socket.on('remove stream', function(stream) {
           $scope.connection.removeStream('scott');
         });

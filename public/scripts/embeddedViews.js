@@ -13,6 +13,12 @@
         onToggle: '&'
       },
       link: function($scope, elem) {
+        $scope.$on('attachStream', function(e, description) {
+          elem.append(description.element);
+        });
+        $scope.$on('removeStream', function() {
+          elem.empty();
+        });
         elem.attr('id', $scope.setId);
       }
     };

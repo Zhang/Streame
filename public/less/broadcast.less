@@ -4,7 +4,7 @@
 @header-height: 20px;
 @header-total-height: calc(2 ~"*" @header-padding ~"+" @header-height);
 @viewer-height: calc(100% ~"-" @footer-height);
-
+@light-gray: #D2D2D2;
 .header {
   background-color: @purple;
   h2 {
@@ -19,7 +19,7 @@
   position: absolute;
   z-index: 100;
   &:hover {
-    background-color: gray;
+    background-color: @light-gray;
     opacity: .1;
   }
 }
@@ -28,6 +28,7 @@
 }
 .generic-container {
   margin: 0 auto;
+  padding: 10px 0;
   height: @generic-height;
   #frame-video {
     height: 100%;
@@ -50,12 +51,14 @@
 .footer-container {
   height: calc(@footer-height ~"/" 1.5);
   width: @footer-height;
-  margin: calc(@footer-height ~"/" 6) 0;
+  margin: calc(@footer-height ~"/" 6) 10px;
   display: inline-block;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
   overflow: hidden;
+  border: 1px solid @light-gray;
+  border-radius: 5px;
 }
 .add-media {
   margin: 0 auto;
@@ -68,7 +71,7 @@
   width: @icon-size;
   display: block;
   border-radius: @icon-size;
-  border: 2px solid gray;
+  border: 2px solid @light-gray;
 }
 .footer {
   border: 1px solid @purple;
@@ -81,9 +84,11 @@
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
+  cursor: pointer;
 }
 .url-input {
   display: block;
+  width: 100%;
   margin: 0 auto;
 }
 
@@ -91,5 +96,34 @@
   height: calc(100% ~"-" 2 ~"*" @header-padding ~"-" @header-height);
   .main-container {
     height: 100%;
+    position: relative;
+  }
+}
+.small-header {
+  font-size: 10px;
+  font-weight: bold;
+}
+.round {
+  @diameter: 40px;
+  cursor: pointer;
+  display: inline-block;
+  height: @diameter;
+  width: @diameter;
+  background-color: #D2D2D2;
+  border: 1px solid #D2D2D2;
+  margin: 5px 3px;
+  border-radius: @diameter;
+  background-size: 75%;
+}
+.youtube {
+  background-image: url('fonts/youtube.png');
+}
+.picture {
+  background-image: url('fonts/picture.png');
+}
+.modal-content {
+  min-width: @min-width;
+  input {
+    width: 100%;
   }
 }

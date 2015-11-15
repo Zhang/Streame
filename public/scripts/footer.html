@@ -3,11 +3,10 @@
     <div>{{media.url}}</div>
   </div>
   <div class="footer-container">
-    <div ng-if="!add" ng-click="toggleAdd()" class="add-media action"><i class="icon add-icon"></i></div>
-    <form ng-if="add">
-      <input class="url-input" ng-model="url" type="text">
-      <button ng-click="addMedia(url, 'toggleVideo'); toggleAdd()" type="submit">youtube</button>
-      <button ng-click="addMedia(url, 'toggleImage'); toggleAdd()" type="submit">img</button>
-    </form>
+    <span class="small-header">Queue Content</span>
+    <div>
+      <span ng-click="open('Youtube', 'toggleVideo')" class="round youtube icon"></span>
+      <span ng-click="open('Image', 'toggleImage')" class="round picture icon"></span>
+    </div>
   </div>
 </div>

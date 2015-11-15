@@ -29,12 +29,12 @@ module.exports = function(app) {
         var nsp = io.of(req.channel);
         nsp.emit('remove stream', stream);
       });
+
       var ONE_USER = 1;
       socket.join(req.channel);
       var newRoom = _.keys(io.nsps['/'].adapter.rooms[req.channel]).length === ONE_USER;
       var isBroadcaster = _.get(hosts[req.room], 'id') === req.peerId;
-      console.log(hosts[req.room]);
-      console.log(io.nsps['/'].adapter.rooms, req.channel, newRoom, isBroadcaster);
+
       if (newRoom || isBroadcaster) {
         hosts[req.room] = {
           id: req.peerId,
@@ -42,6 +42,10 @@ module.exports = function(app) {
         };
 
         socket.emit('create', req.channel);
+
+        if (isBroadcaster) {
+          socket.broadcast.emit('reconnected', req.channel);
+        }
       } else {
         socket.emit('join', req.channel);
       }
