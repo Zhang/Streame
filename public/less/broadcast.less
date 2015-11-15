@@ -1,11 +1,12 @@
 @footer-height: 120px;
 @generic-height: 100%;
-@header-padding: 20px;
-@header-height: 30px;
+@header-padding: 10px;
+@header-height: 20px;
 @header-total-height: calc(2 ~"*" @header-padding ~"+" @header-height);
-@viewer-height: calc(100% ~"-" @footer-height ~"-" @header-total-height);
+@viewer-height: calc(100% ~"-" @footer-height);
 
 .header {
+  background-color: @purple;
   h2 {
     line-height: @header-height;
     padding: @header-padding;
@@ -41,8 +42,9 @@
 }
 .title-text {
   text-align: center;
-  color: @purple;
-  font-size: 28px;
+  color: white;
+  font-size: 23px;
+  font-weight: bold;
   font-family: 'titlefont';
 }
 .footer-container {
@@ -86,7 +88,7 @@
 }
 
 .app-container {
-  height: 100%;
+  height: calc(100% ~"-" 2 ~"*" @header-padding ~"-" @header-height);
   .main-container {
     height: 100%;
   }

@@ -14,9 +14,12 @@ body {
 .action {
   cursor: pointer;
 }
+.header {
+  background-color: #614471;
+}
 .header h2 {
-  line-height: 30px;
-  padding: 20px;
+  line-height: 20px;
+  padding: 10px;
   margin: 0;
 }
 .generic-container-overlay {
@@ -30,7 +33,7 @@ body {
   opacity: .1;
 }
 .viewer {
-  height: calc(100% - 120px - calc(2 * 20px + 30px));
+  height: calc(100% - 120px);
 }
 .generic-container {
   margin: 0 auto;
@@ -46,8 +49,9 @@ body {
 }
 .title-text {
   text-align: center;
-  color: #614471;
-  font-size: 28px;
+  color: white;
+  font-size: 23px;
+  font-weight: bold;
   font-family: 'titlefont';
 }
 .footer-container {
@@ -89,7 +93,7 @@ body {
   margin: 0 auto;
 }
 .app-container {
-  height: 100%;
+  height: calc(100% - 2 * 10px - 20px);
 }
 .app-container .main-container {
   height: 100%;
