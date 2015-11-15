@@ -14,6 +14,11 @@ body {
 .action {
   cursor: pointer;
 }
+.header h2 {
+  line-height: 30px;
+  padding: 20px;
+  margin: 0;
+}
 .generic-container-overlay {
   height: 100%;
   width: 100%;
@@ -25,7 +30,7 @@ body {
   opacity: .1;
 }
 .viewer {
-  height: 300px;
+  height: calc(100% - 120px - calc(2 * 20px + 30px));
 }
 .generic-container {
   margin: 0 auto;
@@ -46,9 +51,9 @@ body {
   font-family: 'titlefont';
 }
 .footer-container {
-  height: calc(150px / 1.5);
-  width: 150px;
-  margin: calc(150px / 6) 0;
+  height: calc(120px / 1.5);
+  width: 120px;
+  margin: calc(120px / 6) 0;
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -69,7 +74,7 @@ body {
 }
 .footer {
   border: 1px solid #614471;
-  height: 150px;
+  height: 120px;
   width: 100%;
   bottom: 0;
   position: absolute;
@@ -83,14 +88,16 @@ body {
   display: block;
   margin: 0 auto;
 }
+.app-container {
+  height: 100%;
+}
+.app-container .main-container {
+  height: 100%;
+}
 html {
   height: 100%;
 }
 body {
   height: 100%;
-  margin: 0;
-}
-h2.header {
-  padding: 20px;
   margin: 0;
 }

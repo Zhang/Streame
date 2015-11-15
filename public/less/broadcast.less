@@ -1,6 +1,17 @@
-@footer-height: 150px;
+@footer-height: 120px;
 @generic-height: 100%;
+@header-padding: 20px;
+@header-height: 30px;
+@header-total-height: calc(2 ~"*" @header-padding ~"+" @header-height);
+@viewer-height: calc(100% ~"-" @footer-height ~"-" @header-total-height);
 
+.header {
+  h2 {
+    line-height: @header-height;
+    padding: @header-padding;
+    margin: 0;
+  }
+}
 .generic-container-overlay {
   height: @generic-height;
   width: 100%;
@@ -12,7 +23,7 @@
   }
 }
 .viewer {
-  height: 300px;
+  height: @viewer-height;
 }
 .generic-container {
   margin: 0 auto;
@@ -74,3 +85,9 @@
   margin: 0 auto;
 }
 
+.app-container {
+  height: 100%;
+  .main-container {
+    height: 100%;
+  }
+}
