@@ -4,9 +4,27 @@
   </div>
   <div class="footer-container">
     <span class="small-header">Queue Content</span>
-    <div>
-      <span ng-click="open('Youtube', 'toggleVideo')" class="round youtube icon"></span>
-      <span ng-click="open('Image', 'toggleImage')" class="round picture icon"></span>
-    </div>
+    <table class="content-table">
+      <tr>
+        <td>
+          <span ng-click="open('Youtube', 'toggleVideo')" class="round youtube icon"></span>
+        </td>
+        <td>
+          <span ng-click="open('Image', 'toggleImage')" class="round picture icon"></span>
+        </td>
+        <td>
+          <span ng-click="open('Vine', 'toggleVideo')" class="round vine icon"></span>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <span ng-click="open('Gif', 'toggleGif')" class="round imgur icon"></span>
+        </td>
+        <td>
+        </td>
+        <td>
+        </td>
+      </tr>
+    </table>
   </div>
 </div>

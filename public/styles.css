@@ -33,6 +33,7 @@ body {
   opacity: .1;
 }
 .viewer {
+  position: relative;
   height: calc(100% - 120px);
 }
 .generic-container {
@@ -40,11 +41,7 @@ body {
   padding: 10px 0;
   height: 100%;
 }
-.generic-container #frame-video {
-  height: 100%;
-  width: 100%;
-}
-#video-container.generic-container video {
+.generic-container video {
   height: 100%;
   width: 100%;
 }
@@ -56,9 +53,9 @@ body {
   font-family: 'titlefont';
 }
 .footer-container {
-  height: calc(120px / 1.5);
+  height: calc(120px * 0.8);
   width: 120px;
-  margin: calc(120px / 6) 10px;
+  margin: calc(120px * 0.1) 10px;
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -108,22 +105,31 @@ body {
   font-size: 10px;
   font-weight: bold;
 }
-.round {
+.content-table {
+  width: 100%;
+}
+.content-table .round {
   cursor: pointer;
   display: inline-block;
-  height: 40px;
-  width: 40px;
+  height: 30px;
+  width: 30px;
   background-color: #D2D2D2;
   border: 1px solid #D2D2D2;
-  margin: 5px 3px;
-  border-radius: 40px;
+  margin: 0 3px;
+  border-radius: 30px;
   background-size: 75%;
 }
 .youtube {
   background-image: url('fonts/youtube.png');
 }
+.vine {
+  background-image: url('fonts/vine.png');
+}
 .picture {
   background-image: url('fonts/picture.png');
+}
+.imgur {
+  background-image: url('fonts/imgur.jpg');
 }
 .modal-content {
   min-width: 300px;

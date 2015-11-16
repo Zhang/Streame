@@ -27,8 +27,7 @@
       element = element || document.createElement('video');
       opts = _.defaults(opts || {}, {
         autoplay: true,
-        muted: false,
-        //disableContextMenu: false,
+        muted: false
       });
 
       if (opts.autoplay) {
@@ -50,14 +49,17 @@
       peerId: PeerConnection.id
     });
 
-    $scope.socket.on('create', function(room) {
-      if (room !== $stateParams.channel) return;
+    $scope.socket.on('create', function(res) {
+      if (res.channel !== $stateParams.channel) return;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
+        var streamSave = stream;
         attachStream(stream, null, {muted: true});
-
         $scope.socket.on('joined', function(userId) {
-          PeerConnection.call(userId, stream);
+          PeerConnection.call(userId, streamSave);
         });
+        if (res.isReconnection) {
+          $scope.socket.emit('reconnected');
+        }
       }, function(err) {
         console.log('Failed to get local stream', err);
       });
@@ -184,7 +186,8 @@
         $scope.displayContent = {
           video: true,
           iframe: false,
-          image: false
+          image: false,
+          imgur: false
         };
 
         $scope.MAIN_STREAM_ID = 'video-container';

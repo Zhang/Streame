@@ -19,12 +19,17 @@ module.exports = function(app) {
         var nsp = io.of(req.channel);
         nsp.emit('toggleVideo', vid);
       });
-
+      socket.on('toggleGif', function(gif) {
+        var nsp = io.of(req.channel);
+        nsp.emit('toggleGif', gif);
+      });
       socket.on('toggleImage', function(img) {
         var nsp = io.of(req.channel);
         nsp.emit('toggleImage', img);
       });
-
+      socket.on('reconnected', function() {
+        socket.broadcast.emit('reconnected', req.channel);
+      });
       socket.on('remove stream', function(stream) {
         var nsp = io.of(req.channel);
         nsp.emit('remove stream', stream);
@@ -41,11 +46,10 @@ module.exports = function(app) {
           socket: socket
         };
 
-        socket.emit('create', req.channel);
-
-        if (isBroadcaster) {
-          socket.broadcast.emit('reconnected', req.channel);
-        }
+        socket.emit('create', {
+          channel: req.channel,
+          isReconnection: isBroadcaster
+        });
       } else {
         socket.emit('join', req.channel);
       }

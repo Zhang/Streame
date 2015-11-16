@@ -5,6 +5,7 @@
 @header-total-height: calc(2 ~"*" @header-padding ~"+" @header-height);
 @viewer-height: calc(100% ~"-" @footer-height);
 @light-gray: #D2D2D2;
+
 .header {
   background-color: @purple;
   h2 {
@@ -24,23 +25,19 @@
   }
 }
 .viewer {
+  position: relative;
   height: @viewer-height;
 }
 .generic-container {
   margin: 0 auto;
   padding: 10px 0;
   height: @generic-height;
-  #frame-video {
-    height: 100%;
-    width: 100%;
-  }
-}
-#video-container.generic-container {
   video {
     height: 100%;
     width: 100%;
   }
 }
+
 .title-text {
   text-align: center;
   color: white;
@@ -49,9 +46,9 @@
   font-family: 'titlefont';
 }
 .footer-container {
-  height: calc(@footer-height ~"/" 1.5);
+  height: calc(@footer-height ~"*" 0.8);
   width: @footer-height;
-  margin: calc(@footer-height ~"/" 6) 10px;
+  margin: calc(@footer-height ~"*" 0.1) 10px;
   display: inline-block;
   text-align: center;
   vertical-align: middle;
@@ -103,23 +100,32 @@
   font-size: 10px;
   font-weight: bold;
 }
-.round {
-  @diameter: 40px;
-  cursor: pointer;
-  display: inline-block;
-  height: @diameter;
-  width: @diameter;
-  background-color: #D2D2D2;
-  border: 1px solid #D2D2D2;
-  margin: 5px 3px;
-  border-radius: @diameter;
-  background-size: 75%;
+.content-table {
+  width: 100%;
+  .round {
+    @diameter: 30px;
+    cursor: pointer;
+    display: inline-block;
+    height: @diameter;
+    width: @diameter;
+    background-color: #D2D2D2;
+    border: 1px solid #D2D2D2;
+    margin: 0 3px;
+    border-radius: @diameter;
+    background-size: 75%;
+  }
 }
 .youtube {
   background-image: url('fonts/youtube.png');
 }
+.vine {
+  background-image: url('fonts/vine.png');
+}
 .picture {
   background-image: url('fonts/picture.png');
+}
+.imgur {
+  background-image: url('fonts/imgur.jpg');
 }
 .modal-content {
   min-width: @min-width;

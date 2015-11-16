@@ -3,5 +3,6 @@
   <main-stream ng-show="displayContent.video" set-id="MAIN_STREAM_ID" socket="socket" on-toggle="toggleDisplay('video', toggleOn)"></main-stream>
   <video-frame ng-show="displayContent.iframe" set-id="" socket="socket" on-toggle="toggleDisplay('iframe', toggleOn)"></video-frame>
   <image-frame ng-show="displayContent.image" set-id="" socket="socket" on-toggle="toggleDisplay('image', toggleOn)"></image-frame>
+  <gifv-frame ng-show="displayContent.imgur" set-id="" socket="socket" on-toggle="toggleDisplay('imgur', toggleOn)"></gifv-frame>
   <div ng-if="rtcUnavailable">RTC unavailable</div>
 </div>
