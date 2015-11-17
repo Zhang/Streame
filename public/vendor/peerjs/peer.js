@@ -1212,8 +1212,8 @@ function Socket(secure, host, port, path, key) {
   this._queue = [];
   var httpProtocol = secure ? 'https://' : 'http://';
   var wsProtocol = secure ? 'wss://' : 'ws://';
-  this._httpUrl = httpProtocol + host + ':' + port + portStr + path + key;
-  this._wsUrl = wsProtocol + host + ':' + port + portStr + path + 'peerjs?key=' + key;
+  this._httpUrl = httpProtocol + host + ':' + port + path + key;
+  this._wsUrl = wsProtocol + host + ':' + port + path + 'peerjs?key=' + key;
 }
 
 util.inherits(Socket, EventEmitter);
