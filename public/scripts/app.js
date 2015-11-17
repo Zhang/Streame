@@ -25,7 +25,8 @@
   app.factory('PeerConnection', function($cookies) {
     var config = {
       path: '/peerjs',
-      host: $cookies.get('host')
+      host: $cookies.get('host'),
+      port: 443
     };
     if ($cookies.get('host') === 'localhost') {
       config.port = 8080;
