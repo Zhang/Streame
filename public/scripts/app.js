@@ -23,8 +23,13 @@
   });
 
   app.factory('PeerConnection', function($cookies) {
-    return new Peer($cookies.get('cookieId'),
-      {host: $cookies.get('host'), path: '/peerjs'}
-    );
+    var config = {
+      path: '/peerjs',
+      host: $cookies.get('host')
+    };
+    if ($cookies.get('host') === 'localhost') {
+      config.port = 8080;
+    }
+    return new Peer($cookies.get('cookieId'), config);
   });
 })();
