@@ -8,8 +8,8 @@
   ]);
   app.controller('ModalInstanceCtrl', function(Type, $scope) {
     $scope.type = Type.text;
-    $scope.submit = function(url) {
-      $scope.$close(url);
+    $scope.submit = function(url, title) {
+      $scope.$close({url: url, title: title});
     };
     $scope.dismiss = function() {
       $scope.$dismiss();
@@ -107,10 +107,20 @@
         };
 
         $scope.mediaForms = [];
-        var addMedia = function(url, toggleEvent) {
+        var addMedia = function(url, title, toggleEvent) {
+          var thumbnailUrl = url;
+
+          if (toggleEvent === 'toggleVideo') {
+            var youtubeMatch = url.match('www.youtube.com/embed/(.*)') || url.match('https://www.youtube.com/embed/(.*)');
+            var youtubeVideoCode = youtubeMatch[1];
+            thumbnailUrl = 'http://img.youtube.com/vi/' + youtubeVideoCode + '/0.jpg';
+          }
+
           $scope.mediaForms.push({
             url: url,
             type: toggleEvent,
+            title: title,
+            thumbnailUrl: thumbnailUrl,
             toggle: function() {
               $scope.socket.emit(toggleEvent, {
                 on: true,
@@ -138,8 +148,8 @@
             }
           });
 
-          modalInstance.result.then(function (url) {
-            addMedia(url, socketEvent);
+          modalInstance.result.then(function (res) {
+            addMedia(res.url, res.title, socketEvent);
           });
         };
         $scope.socket.on('remove stream', function(stream) {

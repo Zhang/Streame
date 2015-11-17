@@ -1,7 +1,7 @@
 <div class="footer">
-  <div class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+  <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
     <div ng-click="remove($index)">x</div>
-    <div>{{media.url}}</div>
+    <div>{{media.title}}</div>
   </div>
   <div class="footer-container">
     <span class="small-header">Queue Content</span>
