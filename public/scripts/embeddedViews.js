@@ -78,12 +78,15 @@
       link: function($scope, elem) {
         elem.attr('id', $scope.setId);
         $scope.FRAME_ID = 'frame-gif';
-        $scope.socket.on('toggleGif', function(img) {
-          $scope.onToggle({toggleOn: img.on});
-          var src = document.createElement('source');
-          src.src = img.src || '';
-          src.type = 'video/webm';
-          $('#' + $scope.FRAME_ID).append(src);
+        $scope.socket.on('toggleGif', function(gif) {
+          $scope.onToggle({toggleOn: gif.on});
+          $('#' + $scope.FRAME_ID).empty();
+          if (gif.on) {
+            var src = document.createElement('source');
+            src.src = gif.src;
+            src.type = 'video/webm';
+            $('#' + $scope.FRAME_ID).append(src);
+          }
         });
       }
     };

@@ -192,17 +192,17 @@
 
         $scope.MAIN_STREAM_ID = 'video-container';
 
-        $scope.toggleDisplay = function(content, toggleOn) {
+        $scope.toggleDisplay = function(content, socketEvent, toggleOn) {
           _.each($scope.displayContent, function(v, k) {
             $scope.displayContent[k] = false;
           });
           if (toggleOn) {
             $scope.overlay = true;
-            $scope.overlaySignal = content === 'iframe' ? 'toggleVideo' :'toggleImage';
+            $scope.socketEvent = socketEvent;
             $scope.displayContent[content] = true;
           } else {
-            $scope.socket.emit($scope.overlaySignal, {});
-            $scope.overlaySignal = '';
+            $scope.socket.emit($scope.socketEvent, {});
+            $scope.socketEvent = '';
             $scope.overlay = false;
             $scope.displayContent.video = true;
           }
