@@ -24,7 +24,7 @@
 
   app.factory('PeerConnection', function($cookies) {
     return new Peer($cookies.get('cookieId'),
-      {host: 'https://trystreamme.herokuapp.com', port: 8080, path: '/peerjs'}
+      {host: $cookies.get('host'), path: '/peerjs'}
     );
   });
 })();

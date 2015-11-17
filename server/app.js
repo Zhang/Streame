@@ -23,6 +23,7 @@ app.use(cookieSession({
 app.use(cookieParser());
 app.use(function(req, res, next) {
   res.cookie('cookieId', req.cookies.cookieId || require('uuid').v4());
+  res.cookie('host', process.env.HOST || 'localhost');
   next();
 });
 
