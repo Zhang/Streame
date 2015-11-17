@@ -723,6 +723,7 @@ function Peer(id, options) {
   options = util.extend({
     debug: 0, // 1: Errors, 2: Warnings, 3: All logs
     host: util.CLOUD_HOST,
+    port: util.CLOUD_PORT,
     key: 'peerjs',
     path: '/',
     token: util.randomToken(),
@@ -1209,11 +1210,10 @@ function Socket(secure, host, port, path, key) {
   // Disconnected manually.
   this.disconnected = false;
   this._queue = [];
-  var portStr = port ? ':' + port : ''
   var httpProtocol = secure ? 'https://' : 'http://';
   var wsProtocol = secure ? 'wss://' : 'ws://';
-  this._httpUrl = httpProtocol + host + portStr + path + key;
-  this._wsUrl = wsProtocol + host + portStr + path + 'peerjs?key=' + key;
+  this._httpUrl = httpProtocol + host + ':' + port + portStr + path + key;
+  this._wsUrl = wsProtocol + host + ':' + port + portStr + path + 'peerjs?key=' + key;
 }
 
 util.inherits(Socket, EventEmitter);

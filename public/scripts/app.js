@@ -26,6 +26,7 @@
     var config = {
       path: '/peerjs',
       host: $cookies.get('host'),
+      port: 9000
     };
     if ($cookies.get('host') === 'localhost') {
       config.port = 8080;
