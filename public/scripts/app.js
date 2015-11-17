@@ -14,7 +14,7 @@
     $state.go('broadcast');
   });
 
-  app.factory('Socket', function (socketFactory) {
+  app.factory('Socket', function(socketFactory) {
     var socket = socketFactory({
       ioSocket: io.connect()
     });
