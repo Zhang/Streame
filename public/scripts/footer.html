@@ -1,5 +1,6 @@
 <div class="footer">
   <div class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+    <div ng-click="remove($index)">x</div>
     <div>{{media.url}}</div>
   </div>
   <div class="footer-container">

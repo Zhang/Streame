@@ -51,6 +51,7 @@
 
     $scope.socket.on('create', function(res) {
       if (res.channel !== $stateParams.channel) return;
+      $scope.isBroadcaster = true;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
         var streamSave = stream;
         attachStream(stream, null, {muted: true});
@@ -67,6 +68,7 @@
 
     $scope.socket.on('join', function(room) {
       if (room !== $stateParams.channel) return;
+      $scope.isBroadcaster = false;
       PeerConnection.on('call', function(call) {
         call.answer();
         call.on('stream', function(remoteStream) {
@@ -118,7 +120,11 @@
           });
         };
 
-        $scope.open = function (type, socketEvent) {
+        $scope.remove = function(index) {
+          $scope.mediaForms.splice(index, 1);
+        };
+
+        $scope.open = function(type, socketEvent) {
           var modalInstance = $uibModal.open({
             animation: true,
             templateUrl: 'scripts/modal.html',
