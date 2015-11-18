@@ -53,10 +53,16 @@
       if (res.channel !== $stateParams.channel) return;
       $rootScope.isBroadcaster = true;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
-        var streamSave = stream;
         attachStream(stream, null, {muted: true});
+
         $scope.socket.on('joined', function(userId) {
-          PeerConnection.call(userId, streamSave);
+            var call = PeerConnection.call(userId, stream);
+
+            if ($stateParams.isCall) {
+              call.on('stream', function(remoteStream) {
+                attachStream(remoteStream);
+              });
+            }
         });
         if (res.isReconnection) {
           $scope.socket.emit('reconnected');
@@ -68,9 +74,18 @@
 
     $scope.socket.on('join', function(room) {
       if (room !== $stateParams.channel) return;
-      $rootScope.isBroadcaster = false;
+      $rootScope.isBroadcaster = $stateParams.isCall;
       PeerConnection.on('call', function(call) {
-        call.answer();
+        if ($stateParams.isCall) {
+          navigator.getUserMedia({video: true, audio: true}, function(stream) {
+            attachStream(stream, null, {muted: true});
+            call.answer(stream);
+          }, function(err) {
+            console.log('Failed to get local stream', err);
+          });
+        } else {
+          call.answer();
+        }
         call.on('stream', function(remoteStream) {
           attachStream(remoteStream);
         });
@@ -152,13 +167,6 @@
             addMedia(res.url, res.title, socketEvent);
           });
         };
-        $scope.socket.on('remove stream', function(stream) {
-          $scope.connection.removeStream('scott');
-        });
-
-        $scope.stopStream = function() {
-          $scope.socket.emit('remove stream', 'scott');
-        };
 
         // window.AudioContext = window.AudioContext || window.webkitAudioContext;
         // var context = new AudioContext();
@@ -210,9 +218,11 @@
 
         $scope.toggleDisplay = function(content, socketEvent, toggleOn) {
           if (content === 'cancel' && !$rootScope.isBroadcaster) return;
+
           _.each($scope.displayContent, function(v, k) {
             $scope.displayContent[k] = false;
           });
+
           if (toggleOn) {
             $scope.overlay = true;
             $scope.socketEvent = socketEvent;
@@ -224,78 +234,6 @@
             $scope.displayContent.video = true;
           }
         };
-
-      //   var sdpConstraints = {
-      //     mandatory: {
-      //       OfferToReceiveAudio: true,
-      //       OfferToReceiveVideo: true
-      //     }
-      //   };
-      //   $scope.rtcUnavailable = false;
-      //   var video = $('#video');
-      //   var isCreator;
-
-      //   (function initiateConnection() {
-      //     Socket.emit('create or join', '/');
-      //     Socket.on('created', function() {
-      //       isCreator = true;
-      //       var constraints = {video: true, audio: true};
-      //       getUserMedia(constraints, handleUserMedia, handleUserMediaError);
-      //     });
-      //     Socket.on('joined', function() {
-      //       isCreator = false;
-      //       handleUserMedia();
-      //     });
-      //   })();
-
-      //   function handleUserMedia(stream) {
-      //     var videoStream = stream;
-      //     if (isCreator) {
-      //       video.attr('src', window.URL.createObjectURL(stream));
-      //     }
-      //     if (!_.isUndefined(video)) {
-      //       var pc = PeerConnection(video);
-      //       if (pc && isCreator) {
-      //         pc.addStream(videoStream);
-      //         Socket.on('message', function(message) {
-      //           if (message === 'need offer') {
-      //             pc.createOffer(setLocalAndSendMessage(Socket, pc), function() {});
-      //           } else if (message.type === 'answer') {
-      //             pc.setRemoteDescription(new RTCSessionDescription(message));
-      //           }
-      //         });
-      //         pc.createOffer(function(sessionDescription) {
-      //           sessionDescription.sdp = preferOpus(sessionDescription.sdp);
-      //           pc.setLocalDescription(sessionDescription);
-      //           Socket.emit('message', sessionDescription);
-      //         }, function(err) {
-      //           console.log(err);
-      //         });
-      //       } else if (pc) {
-      //         Socket.on('message', function(message) {
-      //           if (message.type === 'offer') {
-      //             pc.setRemoteDescription(new RTCSessionDescription(message));
-      //             pc.createAnswer(setLocalAndSendMessage(Socket, pc), null, sdpConstraints);
-      //           }
-      //         });
-      //         Socket.emit('message', 'need offer');
-      //       } else {
-      //         $scope.rtcUnavailable = true;
-      //       }
-      //     }
-      //   }
-      //   function setLocalAndSendMessage(socket, pc) {
-      //     return function(sessionDescription) {
-      //       // Set Opus as the preferred codec in SDP if Opus is present.
-      //       sessionDescription.sdp = preferOpus(sessionDescription.sdp);
-      //       pc.setLocalDescription(sessionDescription);
-      //       socket.emit('message', sessionDescription);
-      //     };
-      //   }
-
-      //   function handleUserMediaError(error){
-      //     console.log('getUserMedia error: ', error);
-      //   }
       }
     };
   });

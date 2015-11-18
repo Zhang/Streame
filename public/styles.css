@@ -44,8 +44,20 @@ body {
   padding: 10px 0;
   height: 100%;
 }
+.generic-container video:not(:only-of-type) {
+  width: 50%;
+  height: 45%;
+  top: 0;
+  bottom: 0;
+  position: absolute;
+  margin: auto;
+  border-radius: 5px;
+}
+.generic-container video:first-child {
+  right: 0;
+}
 .generic-container iframe,
-.generic-container video {
+.generic-container video:only-of-type {
   width: 100%;
   height: 100%;
 }
@@ -57,7 +69,7 @@ body {
   right: 0;
   margin: auto;
   max-height: 100%;
-  max-width: 100%;
+  max-width: 50%;
 }
 .title-text {
   text-align: center;

@@ -5,7 +5,7 @@
   module.config(function($stateProvider) {
     $stateProvider
       .state('broadcast', {
-        url: '/:channel?isBroadcaster',
+        url: '/:channel?isCall',
         templateUrl: 'scripts/broadcast.html',
         controller: 'BroadcastController'
       });
