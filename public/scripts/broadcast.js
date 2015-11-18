@@ -15,7 +15,7 @@
       $scope.$dismiss();
     };
   });
-  app.controller('BroadcastController', function($scope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
+  app.controller('BroadcastController', function($scope, $rootScope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
 
@@ -51,7 +51,7 @@
 
     $scope.socket.on('create', function(res) {
       if (res.channel !== $stateParams.channel) return;
-      $scope.isBroadcaster = true;
+      $rootScope.isBroadcaster = true;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
         var streamSave = stream;
         attachStream(stream, null, {muted: true});
@@ -68,7 +68,7 @@
 
     $scope.socket.on('join', function(room) {
       if (room !== $stateParams.channel) return;
-      $scope.isBroadcaster = false;
+      $rootScope.isBroadcaster = false;
       PeerConnection.on('call', function(call) {
         call.answer();
         call.on('stream', function(remoteStream) {
@@ -189,7 +189,7 @@
     };
   });
 
-  app.directive('viewer', function() {
+  app.directive('viewer', function($rootScope) {
     return {
       scope: {
         socket: '=',
@@ -209,6 +209,7 @@
         $scope.MAIN_STREAM_ID = 'video-container';
 
         $scope.toggleDisplay = function(content, socketEvent, toggleOn) {
+          if (content === 'cancel' && !$rootScope.isBroadcaster) return;
           _.each($scope.displayContent, function(v, k) {
             $scope.displayContent[k] = false;
           });
