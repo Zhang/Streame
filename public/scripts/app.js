@@ -26,7 +26,7 @@
     var config = {
       path: '/peerjs',
       host: $cookies.get('host'),
-      port: 8080
+      port: 9000
     };
 
     return new Peer($cookies.get('cookieId'), config);
