@@ -26,11 +26,9 @@
     var config = {
       path: '/peerjs',
       host: $cookies.get('host'),
-      port: 9000
+      port: 8080
     };
-    if ($cookies.get('host') === 'localhost') {
-      config.port = 8080;
-    }
+
     return new Peer($cookies.get('cookieId'), config);
   });
 })();
