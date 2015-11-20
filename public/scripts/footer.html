@@ -16,7 +16,7 @@
     </table>
   </div>
   <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
-    <div ng-click="remove($index)">x</div>
-    <div>{{media.title}}</div>
+    <div class="remove-additional" ng-click="remove($index)">x</div>
+    <div class="additional-title">{{media.title}}</div>
   </div>
 </div>

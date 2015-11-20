@@ -102,6 +102,22 @@ body {
   background-size: 100%;
   color: white;
   background-color: white;
+  position: relative;
+}
+.footer-container .remove-additional {
+  width: 20px;
+  background-color: white;
+  color: red;
+  font-weight: bold;
+}
+.footer-container .additional-title {
+  background-color: white;
+  color: #614471;
+  font-weight: bold;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  opacity: 0.5;
 }
 .add-media {
   margin: 0 auto;
