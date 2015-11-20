@@ -105,9 +105,10 @@ body {
   position: relative;
 }
 .footer-container .remove-additional {
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
   width: 20px;
-  background-color: white;
-  color: red;
+  color: #614471;
   font-weight: bold;
 }
 .footer-container .additional-title {
