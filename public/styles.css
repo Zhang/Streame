@@ -51,7 +51,7 @@ body {
   height: 100%;
 }
 .generic-container video:not(:only-of-type) {
-  width: 50%;
+  width: calc(50% - 30px - 5px);
   max-height: 80%;
   top: 0;
   bottom: 0;
@@ -60,7 +60,7 @@ body {
   border-radius: 5px;
 }
 .generic-container video:first-child {
-  right: 0;
+  right: 30px;
 }
 .generic-container iframe,
 .generic-container video:only-of-type {
