@@ -31,14 +31,19 @@
 }
 @title-height: 65px;
 .stream-title {
-  height: @title-height;
-  line-height: @title-height;
-  padding: 0px 10px;
-  font-weight: bold;
+  h2 {
+    font-size: 24px;
+    margin: 0;
+    height: @title-height;
+    line-height: @title-height;
+    padding: 0px 30px;
+    font-weight: bold;
+  }
 }
 .viewer {
   position: relative;
-  height: calc(100% ~"-" @title-height);
+  height: calc(100% ~"-" @title-height ~"-" 150px);
+  min-height: 300px;
 }
 
 .generic-container {
@@ -46,6 +51,7 @@
   margin: 0 auto;
   padding: 10px @side-padding;
   height: @generic-height;
+  background-color: rgba(97, 68, 113, .25);
   video:not(:only-of-type) {
     width: calc(50% ~"-" @side-padding ~"-" 5px);
     max-height: 80%;
@@ -178,5 +184,27 @@
   min-width: @min-width;
   input {
     width: 100%;
+  }
+}
+.additional-info {
+  padding: 0 30px;
+  .info-header {
+    font-size: 20px;
+    height: 20px;
+    vertical-align: middle;
+  }
+  .topic-selector {
+    height: 100%;
+    vertical-align: middle;
+    font-size: 16px;
+    width: 250px;
+    border: none;
+    &:hover:not(:focus) {
+      cursor: pointer;
+      background-color: gray;
+    }
+    &:focus {
+      cursor: text;
+    }
   }
 }

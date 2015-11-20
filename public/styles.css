@@ -35,20 +35,24 @@ body {
 .is-broadcaster .viewer {
   width: calc(100% - 170px);
 }
-.stream-title {
+.stream-title h2 {
+  font-size: 24px;
+  margin: 0;
   height: 65px;
   line-height: 65px;
-  padding: 0px 10px;
+  padding: 0px 30px;
   font-weight: bold;
 }
 .viewer {
   position: relative;
-  height: calc(100% - 65px);
+  height: calc(100% - 65px - 150px);
+  min-height: 300px;
 }
 .generic-container {
   margin: 0 auto;
   padding: 10px 30px;
   height: 100%;
+  background-color: rgba(97, 68, 113, 0.25);
 }
 .generic-container video:not(:only-of-type) {
   width: calc(50% - 30px - 5px);
@@ -175,10 +179,32 @@ body {
   background-image: url('fonts/vimeo.png');
 }
 .modal-content {
-  min-width: 300px;
+  min-width: 650px;
 }
 .modal-content input {
   width: 100%;
+}
+.additional-info {
+  padding: 0 30px;
+}
+.additional-info .info-header {
+  font-size: 20px;
+  height: 20px;
+  vertical-align: middle;
+}
+.additional-info .topic-selector {
+  height: 100%;
+  vertical-align: middle;
+  font-size: 16px;
+  width: 250px;
+  border: none;
+}
+.additional-info .topic-selector:hover:not(:focus) {
+  cursor: pointer;
+  background-color: gray;
+}
+.additional-info .topic-selector:focus {
+  cursor: text;
 }
 html {
   height: 100%;
@@ -186,7 +212,7 @@ html {
 body {
   height: 100%;
   margin: 0;
-  min-width: 300px;
+  min-width: 650px;
   min-height: 400px;
   overflow: hidden;
 }

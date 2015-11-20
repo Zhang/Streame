@@ -17,6 +17,7 @@
     "angular": "1.4.7",
     "angular-bootstrap": "~0.14.3",
     "angular-cookies": "~1.4.7",
+    "angular-gridster": "0.13.5",
     "angular-socket-io": "0.7.0",
     "angular-ui-router": "ui-router#~0.2.15",
     "angular-uuid4": "0.3.1",

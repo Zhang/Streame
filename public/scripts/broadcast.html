@@ -1,5 +1,10 @@
 <div class="main-container" ng-class="{'is-broadcaster': isBroadcaster}">
-  <div class="stream-title">Scott</div>
+  <div class="stream-title">
+    <h2>
+      {{channel || 'Default'}} Channel
+    </h2>
+  </div>
   <viewer connection="connection" socket="socket"></viewer>
+  <additional-info></additional-info>
   <footer ng-if="isBroadcaster" socket="socket" connection="connection"></footer>
 </div>

@@ -20,7 +20,7 @@
   app.controller('BroadcastController', function($scope, $rootScope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
-
+    $scope.channel = $stateParams.channel;
     function removeStream() {
       $scope.$broadcast('removeStream');
     }
@@ -105,7 +105,7 @@
   app.directive('header', function() {
     return {
       replace: true,
-      template: '<div class="header"><h2 class="title-text">Stream Me</h2></div>'
+      template: '<div class="header"><h2 class="title-text">Live Quack</h2></div>'
     };
   });
 
@@ -203,6 +203,17 @@
         //   });
         //   reader.readAsArrayBuffer(this.files[0]);
         // };
+      }
+    };
+  });
+
+  app.directive('additionalInfo', function() {
+    return {
+      scope: {
+      },
+      templateUrl: 'scripts/additionalInfo.html',
+      link: function($scope) {
+        $scope.topic = 'National Ave Talks AYTO Season Finale';
       }
     };
   });
