@@ -1,4 +1,5 @@
 <div class="generic-container">
-  <video id="{{FRAME_ID}}" preload="auto" autoplay="autoplay" loop="loop">
+  <video ng-show="isGif" id="{{FRAME_ID}}" preload="auto" autoplay="autoplay" loop="loop">
   </video>
+  <img ng-show="!isGif" id="{{IMG_ID}}" src=""></img>
 </div>

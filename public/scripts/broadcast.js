@@ -6,15 +6,17 @@
     'streamit.embeddedViews',
     'ngCookies'
   ]);
+
   app.controller('ModalInstanceCtrl', function(Type, $scope) {
     $scope.type = Type.text;
-    $scope.submit = function(url, title) {
-      $scope.$close({url: url, title: title});
+    $scope.submit = function(url, title, type) {
+      $scope.$close({url: url, title: title, type: type});
     };
     $scope.dismiss = function() {
       $scope.$dismiss();
     };
   });
+
   app.controller('BroadcastController', function($scope, $rootScope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
@@ -122,15 +124,7 @@
         };
 
         $scope.mediaForms = [];
-        var addMedia = function(url, title, toggleEvent) {
-          var thumbnailUrl = url;
-
-          if (toggleEvent === 'toggleVideo') {
-            var youtubeMatch = url.match('www.youtube.com/embed/(.*)') || url.match('https://www.youtube.com/embed/(.*)');
-            var youtubeVideoCode = youtubeMatch[1];
-            thumbnailUrl = 'http://img.youtube.com/vi/' + youtubeVideoCode + '/0.jpg';
-          }
-
+        var addMedia = function(url, title, thumbnailUrl, toggleEvent) {
           $scope.mediaForms.push({
             url: url,
             type: toggleEvent,
@@ -164,7 +158,22 @@
           });
 
           modalInstance.result.then(function (res) {
-            addMedia(res.url, res.title, socketEvent);
+            var url = res.url;
+            var thumbnailUrl = url;
+
+            if (socketEvent === 'toggleVideo') {
+              var youtubeMatches = url.match(/embed\/(.*)/i) || url.match(/v=(.*?)&/i);
+              var youtubeVideoCode = youtubeMatches[1];
+              thumbnailUrl = 'http://img.youtube.com/vi/' + youtubeVideoCode + '/0.jpg';
+              url = 'https://www.youtube.com/embed/' + youtubeVideoCode;
+            } else if (socketEvent === 'toggleGif') {
+              var type = res.type === 'gif' ? '.webm' : '.jpg';
+              var imgurCode = url.match(/gallery\/(.*)/i) || url.match(/\/(.*?).webm/i) || url.match(/\/(.*?).gifv/i) || url.match(/\/(.*?).gif/i) || url.match(/\/(.*?).jpg/i) || (/\/(.*?).png/i);
+              url = 'https://i.imgur.com/' + imgurCode[1] + type;
+              thumbnailUrl = url;
+            }
+
+            addMedia(url, res.title, thumbnailUrl, socketEvent);
           });
         };
 
