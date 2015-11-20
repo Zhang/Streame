@@ -33,15 +33,21 @@ body {
   opacity: .1;
 }
 .is-broadcaster .viewer {
-  height: calc(100% - 120px);
+  width: calc(100% - 170px);
+}
+.stream-title {
+  height: 65px;
+  line-height: 65px;
+  padding: 0px 10px;
+  font-weight: bold;
 }
 .viewer {
   position: relative;
-  height: 100%;
+  height: calc(100% - 65px);
 }
 .generic-container {
   margin: 0 auto;
-  padding: 10px 0;
+  padding: 10px 30px;
   height: 100%;
 }
 .generic-container video:not(:only-of-type) {
@@ -79,10 +85,10 @@ body {
   font-family: 'titlefont';
 }
 .footer-container {
-  height: calc(120px * 0.8);
-  width: 120px;
-  margin: calc(120px * 0.1) 10px;
-  display: inline-block;
+  width: calc(170px * 0.8);
+  height: 100px;
+  margin: 5px auto;
+  display: block;
   text-align: center;
   vertical-align: middle;
   white-space: nowrap;
@@ -91,6 +97,7 @@ body {
   border-radius: 5px;
   background-size: 100%;
   color: white;
+  background-color: white;
 }
 .add-media {
   margin: 0 auto;
@@ -105,12 +112,14 @@ body {
   border: 2px solid #d2d2d2;
 }
 .footer {
-  border: 1px solid #614471;
-  height: 120px;
-  width: 100%;
+  border: 1px solid #EEEBEB;
+  background-color: #EEEBEB;
+  right: 0;
+  height: 100%;
+  width: 170px;
   bottom: 0;
   position: absolute;
-  overflow: scroll;
+  overflow: auto;
 }
 .icon {
   background-repeat: no-repeat;
@@ -133,9 +142,11 @@ body {
 .small-header {
   font-size: 10px;
   font-weight: bold;
+  color: black;
 }
 .content-table {
   width: 100%;
+  margin-top: 5px;
 }
 .content-table .round {
   cursor: pointer;
@@ -160,6 +171,9 @@ body {
 .imgur {
   background-image: url('fonts/imgur.jpg');
 }
+.vimeo {
+  background-image: url('fonts/vimeo.png');
+}
 .modal-content {
   min-width: 300px;
 }
@@ -174,4 +188,5 @@ body {
   margin: 0;
   min-width: 300px;
   min-height: 400px;
+  overflow: hidden;
 }

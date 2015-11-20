@@ -162,10 +162,11 @@
             var thumbnailUrl = url;
 
             if (socketEvent === 'toggleVideo') {
-              var youtubeMatches = url.match(/embed\/(.*)/i) || url.match(/v=(.*?)&/i);
+              var youtubeMatches = url.match(/embed\/(.*)/i) || url.match(/v=(.*?)&/i) || url.match(/v=(.*)/i);
+              var queries = url.match(/t=(.*)/) || '';
               var youtubeVideoCode = youtubeMatches[1];
               thumbnailUrl = 'http://img.youtube.com/vi/' + youtubeVideoCode + '/0.jpg';
-              url = 'https://www.youtube.com/embed/' + youtubeVideoCode;
+              url = 'https://www.youtube.com/embed/' + youtubeVideoCode + '?autoplay=1&' + queries[0];
             } else if (socketEvent === 'toggleGif') {
               var type = res.type === 'gif' ? '.webm' : '.jpg';
               var imgurCode = url.match(/gallery\/(.*)/i) || url.match(/\/(.*?).webm/i) || url.match(/\/(.*?).gifv/i) || url.match(/\/(.*?).gif/i) || url.match(/\/(.*?).jpg/i) || (/\/(.*?).png/i);

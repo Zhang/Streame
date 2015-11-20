@@ -1,8 +1,4 @@
 <div class="footer">
-  <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
-    <div ng-click="remove($index)">x</div>
-    <div>{{media.title}}</div>
-  </div>
   <div class="footer-container">
     <span class="small-header">Queue Content</span>
     <table class="content-table">
@@ -14,18 +10,13 @@
           <span ng-click="open('Image', 'toggleImage')" class="round picture icon"></span>
         </td>
         <td>
-          <span ng-click="open('Vine', 'toggleVideo')" class="round vine icon"></span>
-        </td>
-      </tr>
-      <tr>
-        <td>
           <span ng-click="open('Gif', 'toggleGif')" class="round imgur icon"></span>
-        </td>
-        <td>
-        </td>
-        <td>
         </td>
       </tr>
     </table>
+  </div>
+  <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+    <div ng-click="remove($index)">x</div>
+    <div>{{media.title}}</div>
   </div>
 </div>
