@@ -107,7 +107,13 @@
     return {
       scope: {},
       restrict: 'E',
-      templateUrl: 'scripts/reactions.html'
+      templateUrl: 'scripts/reactions.html',
+      link: function($scope) {
+        $scope.number = 7;
+        $scope.add = function() {
+          $scope.number += 1;
+        };
+      }
     };
   });
 })();

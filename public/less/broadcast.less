@@ -33,6 +33,13 @@ h2 {
     width: 45px;
     padding-top: 5px;
     border-radius: 45px;
+    &:hover {
+      background-color: @light-gray;
+    }
+    &:active {
+      background-color: @purple;
+      color: black;
+    }
   }
 }
 .generic-container-overlay {
@@ -45,11 +52,10 @@ h2 {
     opacity: .1;
   }
 }
-.is-broadcaster {
-  .viewer {
-    width: @viewer-height;
-  }
+.viewer {
+  width: @viewer-height;
 }
+
 @title-height: 65px;
 .stream-title-container {
   padding: 0px 30px;
@@ -212,6 +218,7 @@ h2 {
   padding: 10px 30px;
   .info-header {
     font-size: 20px;
+    font-weight: 600;
     height: 20px;
     vertical-align: middle;
   }
@@ -219,6 +226,7 @@ h2 {
     height: 100%;
     vertical-align: middle;
     font-size: 16px;
+    color: #6B6868;
     width: 250px;
     border: none;
     &:hover:not(:focus) {
@@ -251,4 +259,12 @@ h2 {
   font-weight: bold;
   font-size: 12px;
   text-align: center;
+}
+
+.persistance-container {
+  padding: 10px 30px;
+
+  .persistance {
+    display: inline-block;
+  }
 }

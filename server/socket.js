@@ -34,7 +34,9 @@ module.exports = function(app) {
         var nsp = io.of(req.channel);
         nsp.emit('remove stream', stream);
       });
-
+      socket.on('chat-sent', function(chat) {
+        socket.emit('chat-received', chat);
+      });
       var ONE_USER = 1;
       socket.join(req.channel);
       var newRoom = _.keys(io.nsps['/'].adapter.rooms[req.channel]).length === ONE_USER;

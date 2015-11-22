@@ -262,4 +262,40 @@
       }
     };
   });
+
+  app.directive('persist', function() {
+    return {
+      scope: {},
+      templateUrl: 'scripts/persist.html',
+      replace: true,
+      restrict: 'E',
+      link: function() {}
+    };
+  });
+
+  app.directive('chat', function() {
+    return {
+      scope: {
+        socket: '='
+      },
+      templateUrl: 'scripts/chat.html',
+      replace: true,
+      restrict: 'E',
+      link: function($scope, elem) {
+        $scope.chats = [];
+        var username = ['bliggybloff', 'bb', 'guineaPigz', 'bLiners', 'MoshiMoshi', 'Gogurt Cop', 'Most Wise Tooth'][Math.floor(Math.random() * 7)];
+        $scope.socket.on('chat-received', function(chat) {
+          $scope.chats.push(chat);
+        });
+        $('#chat-text').keypress(function(e) {
+          if (e.which === 13) {
+            e.preventDefault();
+            var text = $('#chat-text').val();
+            $('#chat-text').val('');
+            $scope.socket.emit('chat-sent', {text: text, username: username});
+          }
+        });
+      }
+    };
+  });
 })();

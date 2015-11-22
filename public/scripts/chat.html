@@ -1,0 +1,11 @@
+<div class="chat-container">
+  <div class="chats">
+    <div class="chat" ng-repeat="chat in chats">
+      <div class="username">{{chat.username}}</div>
+      <div class="chat-sent-text">{{chat.text}}</div>
+    </div>
+  </div>
+  <div class="chat-input">
+    <textarea id="chat-text" type="text"></textarea>
+  </div>
+</div>

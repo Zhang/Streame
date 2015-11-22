@@ -44,6 +44,13 @@ h2 {
   padding-top: 5px;
   border-radius: 45px;
 }
+.react-overlay .reaction-container:hover {
+  background-color: #d2d2d2;
+}
+.react-overlay .reaction-container:active {
+  background-color: #614471;
+  color: black;
+}
 .generic-container-overlay {
   height: 100%;
   width: 100%;
@@ -54,7 +61,7 @@ h2 {
   background-color: #d2d2d2;
   opacity: .1;
 }
-.is-broadcaster .viewer {
+.viewer {
   width: calc(100% - 170px);
 }
 .stream-title-container {
@@ -213,6 +220,7 @@ h2 {
 }
 .additional-info .info-header {
   font-size: 20px;
+  font-weight: 600;
   height: 20px;
   vertical-align: middle;
 }
@@ -220,6 +228,7 @@ h2 {
   height: 100%;
   vertical-align: middle;
   font-size: 16px;
+  color: #6B6868;
   width: 250px;
   border: none;
 }
@@ -252,7 +261,14 @@ h2 {
   font-size: 12px;
   text-align: center;
 }
-.footer {
+.persistance-container {
+  padding: 10px 30px;
+}
+.persistance-container .persistance {
+  display: inline-block;
+}
+.footer,
+.chat-container {
   border: 1px solid #EEEBEB;
   background-color: #EEEBEB;
   right: 0;
@@ -260,7 +276,8 @@ h2 {
   width: 170px;
   bottom: 0;
   position: absolute;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .footer-common {
   margin: 5px auto;
@@ -288,10 +305,8 @@ h2 {
   background-color: white;
 }
 .footer-container .remove-additional {
-  background-color: rgba(255, 255, 255, 0.5);
   border-radius: 20px;
   width: 20px;
-  color: #614471;
   font-weight: bold;
 }
 .footer-container .remove-additional:hover {
@@ -309,6 +324,35 @@ h2 {
 }
 .fade-on-hover:hover {
   opacity: .7;
+}
+.chat-input {
+  display: block;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+  bottom: 10px;
+}
+.chat-input textarea {
+  width: 100%;
+  border: 1px solid #d2d2d2;
+  border-radius: 5px;
+  resize: none;
+}
+.chats {
+  height: 90%;
+  padding: 10px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.chat {
+  padding: 0 10px 5px 10px;
+  font-size: 12px;
+}
+.chat .username {
+  font-weight: bold;
+}
+.chat .chat-sent-text {
+  word-wrap: break-word;
 }
 html {
   height: 100%;

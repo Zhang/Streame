@@ -1,0 +1,29 @@
+.chat-input {
+  display: block;
+  width: 80%;
+  margin: 0 auto;
+  position: relative;
+  bottom: 10px;
+  textarea {
+    width: 100%;
+    border: 1px solid @light-gray;
+    border-radius: 5px;
+    resize: none;
+  }
+}
+.chats {
+  height: 90%;
+  padding: 10px 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.chat {
+  padding: 0 10px 5px 10px;
+  font-size: 12px;
+  .username {
+    font-weight: bold;
+  }
+  .chat-sent-text {
+    word-wrap: break-word;
+  }
+}

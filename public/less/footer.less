@@ -1,4 +1,4 @@
-.footer {
+.footer, .chat-container {
   border: 1px solid #EEEBEB;
   background-color: #EEEBEB;
   right: 0;
@@ -6,7 +6,8 @@
   width: @footer-width;
   bottom: 0;
   position: absolute;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .footer-common {
@@ -36,10 +37,10 @@
   color: white;
   background-color: white;
   .remove-additional {
-    background-color: rgba(255, 255, 255, .5);
+    //background-color: rgba(255, 255, 255, .5);
     border-radius: 20px;
     width: 20px;
-    color: @purple;
+    //color: @purple;
     font-weight: bold;
     &:hover {
       color: white;
