@@ -21,6 +21,10 @@
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
     $scope.channel = $stateParams.channel;
+    $scope.user = {
+      name: 'Scott',
+      image: 'fonts/scott.jpg'
+    };
     function removeStream() {
       $scope.$broadcast('removeStream');
     }
@@ -105,7 +109,7 @@
   app.directive('header', function() {
     return {
       replace: true,
-      template: '<div class="header"><h2 class="title-text">Live Quack</h2></div>'
+      template: '<div class="header"><h2 class="title-text">Stream Me - Under Developement</h2></div>'
     };
   });
 

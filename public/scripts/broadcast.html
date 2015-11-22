@@ -1,8 +1,18 @@
 <div class="main-container" ng-class="{'is-broadcaster': isBroadcaster}">
-  <div class="stream-title">
-    <h2>
-      {{channel || 'Default'}} Channel
-    </h2>
+  <div class="stream-title-container">
+    <div class="title-padding">
+      <div class="profile-image">
+        <img src="{{user.image}}"/>
+      </div>
+      <div class="profile-text">
+        <h2>
+          {{channel || 'Default'}} Channel
+        </h2>
+        <h4>
+          With <a class="link">{{user.name || 'Default'}}</a>
+        </h4>
+      </div>
+    </div>
   </div>
   <viewer connection="connection" socket="socket"></viewer>
   <additional-info></additional-info>

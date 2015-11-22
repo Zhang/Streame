@@ -1,5 +1,5 @@
 <div class="footer">
-  <div class="footer-container">
+  <div class="footer-common add-content">
     <span class="small-header">Add Queue Content</span>
     <table class="content-table">
       <tr>
@@ -15,7 +15,7 @@
       </tr>
     </table>
   </div>
-  <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-container action" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+  <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="footer-common footer-container action fade-on-hover" ng-click="media.toggle()" ng-repeat="media in mediaForms">
     <div class="remove-additional" ng-click="remove($index)">x</div>
     <div class="additional-title">{{media.title}}</div>
   </div>
