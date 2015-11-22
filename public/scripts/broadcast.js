@@ -22,7 +22,7 @@
     $scope.socket = Socket;
     $scope.channel = $stateParams.channel;
     $scope.user = {
-      name: 'Scott',
+      name: 'Caesarofthesky',
       image: 'fonts/scott.jpg'
     };
     function removeStream() {

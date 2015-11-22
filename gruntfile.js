@@ -61,6 +61,7 @@ module.exports = function (grunt) {
           styles: {
             app: [
               '<%= paths.public %>/fonts/bootstrap.min.css',
+              '<%= paths.public %>/fonts/webfonts/ss-emoji.css',
               '<%= paths.public %>/styles.css'
             ]
           }

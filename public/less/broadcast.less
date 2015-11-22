@@ -5,13 +5,34 @@
 @header-total-height: calc(2 ~"*" @header-padding ~"+" @header-height);
 @viewer-height: calc(100% ~"-" @footer-width);
 @light-gray: #D2D2D2;
-
+h2 {
+  margin: 0;
+}
 .header {
   background-color: @purple;
   h2 {
     line-height: @header-height;
     padding: @header-padding;
     margin: 0;
+  }
+}
+.react-overlay {
+  height: 70px;
+  width: 150px;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 101;
+  table {
+    height: 100%;
+    width: 100%;
+  }
+  .reaction-container {
+    background-color: rgba(97, 68, 113, 0.5);
+    height: 45px;
+    width: 45px;
+    padding-top: 5px;
+    border-radius: 45px;
   }
 }
 .generic-container-overlay {
@@ -208,4 +229,26 @@
       cursor: text;
     }
   }
+}
+.love {
+  background-image: url('fonts/heart_eyes_cat.png');
+}
+.smirk {
+  background-image: url('fonts/smirk_cat.png');
+}
+.scream {
+  background-image: url('fonts/scream_cat.png');
+}
+.round {
+  height: 20px;
+  width: 20px;
+  border-radius: 20px;
+  margin: 0 auto;
+}
+.reaction-count {
+  color: white;
+  margin: 0 auto;
+  font-weight: bold;
+  font-size: 12px;
+  text-align: center;
 }
