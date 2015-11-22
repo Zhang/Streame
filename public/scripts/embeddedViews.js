@@ -3,7 +3,7 @@
 (function() {
   var app = angular.module('streamit.embeddedViews', []);
 
-  app.directive('mainStream', function() {
+  app.directive('mainStream', function($compile) {
     return {
       replace: true,
       templateUrl: 'scripts/mainStream.html',
@@ -13,11 +13,16 @@
         onToggle: '&'
       },
       link: function($scope, elem) {
+        $scope.streams = [];
         $scope.$on('attachStream', function(e, description) {
-          elem.append(description.element);
+          var x = $('<div/>', {
+            class: 'vid-holder'
+          }).append(description.element);
+          x.append($compile('<reactions></reactions>')($scope));
+          $('#video-container').append(x);
         });
         $scope.$on('removeStream', function() {
-          elem.empty();
+          $scope.streams.splice(0, $scope.streams.length - 1);
         });
         elem.attr('id', $scope.setId);
       }
@@ -95,6 +100,14 @@
           }
         });
       }
+    };
+  });
+
+  app.directive('reactions', function() {
+    return {
+      scope: {},
+      restrict: 'E',
+      templateUrl: 'scripts/reactions.html'
     };
   });
 })();

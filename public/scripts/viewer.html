@@ -1,26 +1,5 @@
 <div class="viewer" ng-class="{'is-broadcaster': isBroadcaster}">
   <div ng-if="overlay" ng-click="toggleDisplay('cancel')" class="generic-container-overlay" id="controller-container"></div>
-  <div class="react-overlay">
-    <table>
-      <tr>
-        <td>
-          <div class="reaction-container">
-            <div class="icon round love"></div><div class="reaction-count">30</div>
-          </div>
-        </td>
-        <td>
-          <div class="reaction-container">
-            <div class="icon round smirk"></div><div class="reaction-count">30</div>
-          </div>
-        </td>
-        <td>
-          <div class="reaction-container">
-            <div class="icon round scream"></div><div class="reaction-count">30</div>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </div>
   <main-stream ng-show="displayContent.video" set-id="MAIN_STREAM_ID" socket="socket" on-toggle="toggleDisplay('video', 'attachStream', toggleOn)"></main-stream>
   <video-frame ng-show="displayContent.iframe" set-id="" socket="socket" on-toggle="toggleDisplay('iframe', 'toggleVideo', toggleOn)"></video-frame>
   <image-frame ng-show="displayContent.image" set-id="" socket="socket" on-toggle="toggleDisplay('image', 'toggleImage', toggleOn)"></image-frame>
