@@ -266,6 +266,12 @@ h2 {
 }
 .persistance-container .persistance {
   display: inline-block;
+  padding: 5px 10px;
+  background-color: #614471;
+  color: white;
+}
+.persistance-container .persistance:hover {
+  cursor: pointer;
 }
 .footer,
 .chat-container {

@@ -15,7 +15,7 @@
     </div>
   </div>
   <viewer connection="connection" socket="socket"></viewer>
-  <persist></persist>
+  <persist ng-if="!isBroadcaster"></persist>
   <additional-info></additional-info>
   <chat socket="socket"></chat>
   <footer ng-if="isBroadcaster" socket="socket" connection="connection"></footer>

@@ -109,9 +109,11 @@
       restrict: 'E',
       templateUrl: 'scripts/reactions.html',
       link: function($scope) {
-        $scope.number = 7;
-        $scope.add = function() {
-          $scope.number += 1;
+        $scope.number1 = 7;
+        $scope.number2 = 22;
+        $scope.number3 = 14;
+        $scope.add = function(number) {
+          $scope['number' + number] += 1;
         };
       }
     };

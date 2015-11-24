@@ -17,7 +17,20 @@
     };
   });
 
-  app.controller('BroadcastController', function($scope, $rootScope, Socket, $stateParams, uuid4, $cookies, PeerConnection) {
+  app.controller('BroadcastController', function($scope, $rootScope, socketFactory, $stateParams, uuid4, $cookies) {
+    var config = {
+      path: '/peerjs',
+      host: $cookies.get('host'),
+    };
+    if ($cookies.get('host') === 'localhost') {
+      config.port = 9000;
+    }
+
+    var Socket = socketFactory({
+      ioSocket: io.connect()
+    });
+    var peerId = 'zhang' + Math.floor(Math.random() * 1000);
+    var PeerConnection = new Peer(peerId, config);
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.socket = Socket;
     $scope.channel = $stateParams.channel;
@@ -62,13 +75,14 @@
         attachStream(stream, null, {muted: true});
 
         $scope.socket.on('joined', function(userId) {
-            var call = PeerConnection.call(userId, stream);
+          console.log('calling');
+          var call = PeerConnection.call(userId, stream);
 
-            if ($stateParams.isCall) {
-              call.on('stream', function(remoteStream) {
-                attachStream(remoteStream);
-              });
-            }
+          if ($stateParams.isCall) {
+            call.on('stream', function(remoteStream) {
+              attachStream(remoteStream);
+            });
+          }
         });
         if (res.isReconnection) {
           $scope.socket.emit('reconnected');
@@ -79,11 +93,14 @@
     });
 
     $scope.socket.on('join', function(room) {
+      console.log('joined');
       if (room !== $stateParams.channel) return;
       $rootScope.isBroadcaster = $stateParams.isCall;
       PeerConnection.on('call', function(call) {
+        console.log('received call');
         if ($stateParams.isCall) {
           navigator.getUserMedia({video: true, audio: true}, function(stream) {
+            console.log('sending stream as participant');
             attachStream(stream, null, {muted: true});
             call.answer(stream);
           }, function(err) {
@@ -100,9 +117,13 @@
     });
 
     $scope.socket.on('reconnected', function(room) {
+      console.log('reconnected signaled');
       if (room !== $stateParams.channel) return;
       removeStream();
       $scope.socket.emit('add peer', PeerConnection.id);
+    });
+    $scope.$on('$destroy', function() {
+      PeerConnection.destroy();
     });
   });
 
@@ -269,7 +290,11 @@
       templateUrl: 'scripts/persist.html',
       replace: true,
       restrict: 'E',
-      link: function() {}
+      link: function($scope) {
+        $scope.notImplemented = function() {
+          alert('Not Yet Implemented!');
+        };
+      }
     };
   });
 

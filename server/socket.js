@@ -5,15 +5,13 @@ var _ = require('lodash');
 module.exports = function(app) {
   var io = require('socket.io')(app);
   var hosts = {};
+  //socket incoming message format
+  // {}
   io.on('connection', function(socket) {
-    socket.on('message', function (message) {
-      socket.broadcast.emit('message', message);
-    });
-
     //need to ensure sockets can only be in one room at a time
     socket.on('create or join', function(req) {
       socket.on('add peer', function(peerId) {
-        hosts[req.room].socket.emit('joined', peerId);
+        hosts[req.channel].socket.emit('joined', peerId);
       });
       socket.on('toggleVideo', function(vid) {
         var nsp = io.of(req.channel);
@@ -40,10 +38,10 @@ module.exports = function(app) {
       var ONE_USER = 1;
       socket.join(req.channel);
       var newRoom = _.keys(io.nsps['/'].adapter.rooms[req.channel]).length === ONE_USER;
-      var isBroadcaster = _.get(hosts[req.room], 'id') === req.peerId;
+      var isBroadcaster = _.get(hosts[req.channel], 'id') === req.peerId;
 
       if (newRoom || isBroadcaster) {
-        hosts[req.room] = {
+        hosts[req.channel] = {
           id: req.peerId,
           socket: socket
         };
