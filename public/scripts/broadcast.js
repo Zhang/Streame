@@ -17,22 +17,19 @@
     };
   });
 
-  app.controller('BroadcastController', function($scope, $rootScope, socketFactory, $stateParams, uuid4, $cookies) {
-    var config = {
-      path: '/peerjs',
-      host: $cookies.get('host'),
-    };
-    if ($cookies.get('host') === 'localhost') {
-      config.port = 9000;
-    }
+  app.controller('BroadcastController', function($scope, $rootScope, SocketManager, $stateParams, uuid4, $cookies, PeerConnectionManager) {
+    var PeerConnection = PeerConnectionManager.connection;
 
-    var Socket = socketFactory({
-      ioSocket: io.connect()
-    });
-    var peerId = 'zhang' + Math.floor(Math.random() * 1000);
-    var PeerConnection = new Peer(peerId, config);
+    $scope.socket = SocketManager.socket;
+    $scope.socket.standardEmit = function(evt, data) {
+      var formattedData = _.merge({
+        peerId: PeerConnection.id,
+        channel: $stateParams.channel
+      }, data);
+      this.emit(evt, formattedData);
+    };
+
     $scope.MAIN_STREAM_ID = 'video-container';
-    $scope.socket = Socket;
     $scope.channel = $stateParams.channel;
     $scope.user = {
       name: 'Caesarofthesky',
@@ -63,20 +60,15 @@
       });
     }
 
-    $scope.socket.emit('create or join', {
-      channel: $stateParams.channel,
-      peerId: PeerConnection.id
-    });
+    $scope.socket.standardEmit('create or join');
 
-    $scope.socket.on('create', function(res) {
-      if (res.channel !== $stateParams.channel) return;
+    SocketManager.onCreate($stateParams.channel, function(res) {
       $rootScope.isBroadcaster = true;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
         attachStream(stream, null, {muted: true});
 
-        $scope.socket.on('joined', function(userId) {
-          console.log('calling');
-          var call = PeerConnection.call(userId, stream);
+        SocketManager.onJoined($stateParams.channel, function(msg) {
+          var call = PeerConnection.call(msg.peerId, stream);
 
           if ($stateParams.isCall) {
             call.on('stream', function(remoteStream) {
@@ -85,22 +77,18 @@
           }
         });
         if (res.isReconnection) {
-          $scope.socket.emit('reconnected');
+          $scope.socket.standardEmit('reconnected');
         }
       }, function(err) {
         console.log('Failed to get local stream', err);
       });
     });
 
-    $scope.socket.on('join', function(room) {
-      console.log('joined');
-      if (room !== $stateParams.channel) return;
+    SocketManager.onJoin($stateParams.channel, function(data) {
       $rootScope.isBroadcaster = $stateParams.isCall;
-      PeerConnection.on('call', function(call) {
-        console.log('received call');
+      PeerConnectionManager.addOnCall($stateParams.channel, function(call) {
         if ($stateParams.isCall) {
           navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            console.log('sending stream as participant');
             attachStream(stream, null, {muted: true});
             call.answer(stream);
           }, function(err) {
@@ -113,17 +101,13 @@
           attachStream(remoteStream);
         });
       });
-      $scope.socket.emit('add peer', PeerConnection.id);
+      $scope.socket.standardEmit('add peer');
     });
 
     $scope.socket.on('reconnected', function(room) {
-      console.log('reconnected signaled');
       if (room !== $stateParams.channel) return;
       removeStream();
-      $scope.socket.emit('add peer', PeerConnection.id);
-    });
-    $scope.$on('$destroy', function() {
-      PeerConnection.destroy();
+      $scope.socket.standardEmit('add peer');
     });
   });
 
@@ -156,7 +140,7 @@
             title: title,
             thumbnailUrl: thumbnailUrl,
             toggle: function() {
-              $scope.socket.emit(toggleEvent, {
+              $scope.socket.standardEmit(toggleEvent, {
                 on: true,
                 src: url || ''
               });
@@ -274,7 +258,7 @@
             $scope.socketEvent = socketEvent;
             $scope.displayContent[content] = true;
           } else {
-            $scope.socket.emit($scope.socketEvent, {});
+            $scope.socket.standardEmit($scope.socketEvent, {});
             $scope.socketEvent = '';
             $scope.overlay = false;
             $scope.displayContent.video = true;
@@ -317,7 +301,7 @@
             e.preventDefault();
             var text = $('#chat-text').val();
             $('#chat-text').val('');
-            $scope.socket.emit('chat-sent', {text: text, username: username});
+            $scope.socket.standardEmit('chat-sent', {text: text, username: username});
           }
         });
       }

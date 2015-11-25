@@ -15,11 +15,11 @@
       link: function($scope, elem) {
         $scope.streams = [];
         $scope.$on('attachStream', function(e, description) {
-          var x = $('<div/>', {
+          var container = $('<div/>', {
             class: 'vid-holder'
           }).append(description.element);
-          x.append($compile('<reactions></reactions>')($scope));
-          $('#video-container').append(x);
+          container.append($compile('<reactions></reactions>')($scope));
+          $('#video-container').append(container);
         });
         $scope.$on('removeStream', function() {
           $scope.streams.splice(0, $scope.streams.length - 1);

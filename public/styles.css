@@ -273,6 +273,15 @@ h2 {
 .persistance-container .persistance:hover {
   cursor: pointer;
 }
+.is-broadcaster .footer {
+  top: 0;
+  height: 50%;
+}
+.is-broadcaster .chat-container {
+  bottom: 0;
+  height: calc(50%);
+  border-top: 1px solid #d2d2d2;
+}
 .footer,
 .chat-container {
   border: 1px solid #EEEBEB;
@@ -284,6 +293,12 @@ h2 {
   position: absolute;
   overflow-y: auto;
   overflow-x: hidden;
+}
+.chat-header {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
 }
 .footer-common {
   margin: 5px auto;
@@ -345,7 +360,7 @@ h2 {
   resize: none;
 }
 .chats {
-  height: 90%;
+  height: 72%;
   padding: 10px 0;
   overflow-y: auto;
   overflow-x: hidden;

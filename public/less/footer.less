@@ -1,3 +1,14 @@
+.is-broadcaster {
+  .footer {
+    top: 0;
+    height: 50%;
+  }
+  .chat-container {
+    bottom: 0;
+    height: calc(50%);
+    border-top: 1px solid @light-gray;
+  }
+}
 .footer, .chat-container {
   border: 1px solid #EEEBEB;
   background-color: #EEEBEB;
@@ -9,7 +20,12 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
-
+.chat-header {
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
+}
 .footer-common {
   margin: 5px auto;
   display: block;
