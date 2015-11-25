@@ -2,7 +2,7 @@
   <div>
     <h2 class="chat-header">Scott Stream Chat</h2>
   </div>
-  <div class="chats">
+  <div class="chats" ng-scroll-bottom="chats">
     <div class="chat" ng-repeat="chat in chats">
       <div class="username">{{chat.username}}</div>
       <div class="chat-sent-text">{{chat.text}}</div>

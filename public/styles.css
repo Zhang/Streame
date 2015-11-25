@@ -27,7 +27,7 @@ h2 {
 }
 .react-overlay {
   height: 45px;
-  width: 150px;
+  width: 300px;
   right: 0;
   bottom: 0;
   position: absolute;
@@ -36,6 +36,9 @@ h2 {
 .react-overlay table {
   height: 100%;
   width: 100%;
+}
+.react-overlay input {
+  width: calc(100% - 20px);
 }
 .react-overlay .reaction-container {
   background-color: rgba(97, 68, 113, 0.7);
@@ -63,12 +66,13 @@ h2 {
 }
 .viewer {
   width: calc(100% - 170px);
-  padding: 30px 10px;
+  padding: 0px 10px;
 }
 .inner-container {
   position: relative;
   height: 100%;
   background-color: #d2d2d2;
+  border-radius: 5px;
 }
 .stream-title-container {
   padding: 0px 30px;
