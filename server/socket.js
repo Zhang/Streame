@@ -17,6 +17,10 @@ module.exports = function(app) {
       var nsp = io.of(msg.channel);
       nsp.emit('toggleVideo', msg);
     });
+    socket.on('add comment', function(msg) {
+      var nsp = io.of(msg.channel);
+      nsp.emit('comment added', msg);
+    });
     socket.on('toggleGif', function(msg) {
       var nsp = io.of(msg.channel);
       nsp.emit('toggleGif', msg);

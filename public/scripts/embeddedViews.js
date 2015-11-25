@@ -18,7 +18,7 @@
           var container = $('<div/>', {
             class: 'vid-holder'
           }).append(description.element);
-          container.append($compile('<reactions></reactions>')($scope));
+          container.append($compile('<reactions socket="socket"></reactions>')($scope));
           $('#video-container').append(container);
         });
         $scope.$on('removeStream', function() {
@@ -103,18 +103,43 @@
     };
   });
 
-  app.directive('reactions', function() {
+  app.directive('reactions', function($timeout) {
     return {
-      scope: {},
+      scope: {
+        socket: '='
+      },
       restrict: 'E',
       templateUrl: 'scripts/reactions.html',
-      link: function($scope) {
-        $scope.number1 = 7;
-        $scope.number2 = 22;
-        $scope.number3 = 14;
-        $scope.add = function(number) {
-          $scope['number' + number] += 1;
-        };
+      link: function($scope, el) {
+        var sendMsg = _.throttle(
+          function() {
+            var text = $('#react-comment').val();
+            $scope.socket.standardEmit('add comment', {text: text});
+            $('#react-comment').val('');
+          },
+          1000,
+          { leading: true, trailing: false }
+        );
+
+        $('#react-comment').keypress(function(e) {
+          if (e.which === 13) {
+            e.preventDefault();
+            sendMsg();
+          }
+        });
+
+        $scope.socket.on('comment added', function(msg) {
+          var commentContainer = $('<span/>', {
+            text: msg.text,
+            class: 'comment'
+          });
+          commentContainer.css('top', Math.floor(Math.random() * 90) + '%');
+          commentContainer.css('right', Math.floor(Math.random() * 90) + '%');
+          el.append(commentContainer);
+          $timeout(function() {
+            commentContainer.remove();
+          }, 3000);
+        });
       }
     };
   });

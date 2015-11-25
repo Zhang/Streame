@@ -273,6 +273,12 @@ h2 {
 .persistance-container .persistance:hover {
   cursor: pointer;
 }
+.comment {
+  background-color: white;
+  padding: 5px;
+  position: absolute;
+  border-radius: 5px;
+}
 .is-broadcaster .footer {
   top: 0;
   height: 50%;
