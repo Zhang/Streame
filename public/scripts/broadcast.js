@@ -157,7 +157,6 @@
             animation: true,
             templateUrl: 'scripts/modal.html',
             controller: 'ModalInstanceCtrl',
-            size: 'sm',
             scope: $scope,
             resolve: {
               Type: {
