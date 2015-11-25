@@ -63,6 +63,12 @@ h2 {
 }
 .viewer {
   width: calc(100% - 170px);
+  padding: 30px 10px;
+}
+.inner-container {
+  position: relative;
+  height: 100%;
+  background-color: #d2d2d2;
 }
 .stream-title-container {
   padding: 0px 30px;

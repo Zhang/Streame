@@ -222,7 +222,7 @@
       },
       templateUrl: 'scripts/additionalInfo.html',
       link: function($scope) {
-        $scope.topic = 'National Ave Talks AYTO Season Finale';
+        $scope.topic = 'Guinea pig merits';
       }
     };
   });
