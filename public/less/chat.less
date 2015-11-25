@@ -1,9 +1,32 @@
+@chat-header-height: 30px;
+@chat-input-height: 40px;
+@chat-bottom-padding: 10px;
+@chat-body-height: calc(100% ~"-" @chat-header-height ~"-" @chat-input-height ~"-" @chat-bottom-padding);
+
+.is-broadcaster {
+  .chat-container {
+    bottom: 0;
+    height: 50%;
+    border-top: 1px solid @light-gray;
+  }
+}
+.chat-header {
+  font-size: 14px;
+  height: @chat-header-height;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px 0;
+}
+.chat-container {
+  height: 100%;
+}
 .chat-input {
   display: block;
   width: 80%;
   margin: 0 auto;
   position: relative;
-  bottom: 10px;
+  height: @chat-input-height;
+  padding-bottom: @chat-bottom-padding;
   textarea {
     width: 100%;
     border: 1px solid @light-gray;
@@ -12,7 +35,7 @@
   }
 }
 .chats {
-  height: 72%;
+  height: @chat-body-height;
   padding: 10px 0;
   overflow-y: auto;
   overflow-x: hidden;
