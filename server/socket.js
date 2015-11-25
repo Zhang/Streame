@@ -44,11 +44,11 @@ module.exports = function(app) {
       var ONE_USER = 1;
       socket.join(msg.channel);
       var newRoom = _.keys(io.nsps['/'].adapter.rooms[msg.channel]).length === ONE_USER;
-      var isBroadcaster = _.get(hosts[msg.channel], 'id') === msg.peerId;
+      var isBroadcaster = _.get(hosts[msg.channel], 'id') === msg.userId;
 
       if (newRoom || isBroadcaster) {
         hosts[msg.channel] = {
-          id: msg.peerId,
+          id: msg.userId,
           socket: socket
         };
 

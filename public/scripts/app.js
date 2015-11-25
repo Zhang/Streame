@@ -44,7 +44,7 @@
     function eventCreator(evnt) {
       return function (channel, fn) {
         if (createdEvents[evnt][channel]) return;
-        createdEvents.create[channel] = true;
+        createdEvents[evnt][channel] = true;
         socket.on(evnt, function(data) {
           if (data.channel !== channel) return;
           fn(data);

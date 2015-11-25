@@ -4,7 +4,8 @@
   var app = angular.module('streamit.broadcast', [
     'uuid4',
     'streamit.embeddedViews',
-    'ngCookies'
+    'ngCookies',
+    'uuid4'
   ]);
 
   app.controller('ModalInstanceCtrl', function(Type, $scope) {
@@ -17,14 +18,26 @@
     };
   });
 
-  app.controller('BroadcastController', function($scope, $rootScope, SocketManager, $stateParams, uuid4, $cookies, PeerConnectionManager) {
-    var PeerConnection = PeerConnectionManager.connection;
-
-    $scope.socket = SocketManager.socket;
+  var count = 1;
+  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, socketFactory) {
+    //var PeerConnection = PeerConnectionManager.connection;
+    var config = {
+      path: '/peerjs',
+      host: $cookies.get('host'),
+      wtf: count += 1
+    };
+    if ($cookies.get('host') === 'localhost') {
+      config.port = 9000;
+    }
+    var PeerConnection = new Peer(uuid4.generate(), config);
+    $scope.socket = socketFactory({
+      ioSocket: io.connect()
+    });
     $scope.socket.standardEmit = function(evt, data) {
       var formattedData = _.merge({
         peerId: PeerConnection.id,
-        channel: $stateParams.channel
+        channel: $stateParams.channel,
+        userId: $cookies.get('cookieId')
       }, data);
       this.emit(evt, formattedData);
     };
@@ -62,14 +75,12 @@
 
     $scope.socket.standardEmit('create or join');
 
-    SocketManager.onCreate($stateParams.channel, function(res) {
+    $scope.socket.on('create', function(res) {
       $rootScope.isBroadcaster = true;
       navigator.getUserMedia({video: true, audio: true}, function(stream) {
         attachStream(stream, null, {muted: true});
-
-        SocketManager.onJoined($stateParams.channel, function(msg) {
+        $scope.socket.on('joined', function(msg) {
           var call = PeerConnection.call(msg.peerId, stream);
-
           if ($stateParams.isCall) {
             call.on('stream', function(remoteStream) {
               attachStream(remoteStream);
@@ -84,9 +95,9 @@
       });
     });
 
-    SocketManager.onJoin($stateParams.channel, function(data) {
+    $scope.socket.on('join', function(data) {
       $rootScope.isBroadcaster = $stateParams.isCall;
-      PeerConnectionManager.addOnCall($stateParams.channel, function(call) {
+      PeerConnection.on('call', function(call) {
         if ($stateParams.isCall) {
           navigator.getUserMedia({video: true, audio: true}, function(stream) {
             attachStream(stream, null, {muted: true});
@@ -108,6 +119,10 @@
       if (room !== $stateParams.channel) return;
       removeStream();
       $scope.socket.standardEmit('add peer');
+    });
+
+    $scope.$on('$destroy' , function() {
+      PeerConnection.destroy();
     });
   });
 
@@ -185,32 +200,6 @@
             addMedia(url, res.title, thumbnailUrl, socketEvent);
           });
         };
-
-        // window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        // var context = new AudioContext();
-        // var gainNode = context.createGain();
-        // gainNode.connect(context.destination);
-        // // don't play for self
-        // gainNode.gain.value = 0;
-        // document.querySelector('input[type=file]').onchange = function() {
-        //   this.disabled = true;
-        //   var reader = new FileReader();
-        //   reader.onload = (function(e) {
-        //     // Import callback function that provides PCM audio data decoded as an audio buffer
-        //     context.decodeAudioData(e.target.result, function(buffer) {
-        //       // Create the sound source
-        //       var soundSource = context.createBufferSource();
-        //       soundSource.buffer = buffer;
-        //       soundSource.start(0, 0 / 1000);
-        //       soundSource.connect(gainNode);
-        //       var destination = context.createMediaStreamDestination();
-        //       soundSource.connect(destination);
-        //       destination.stream.streamid = 'audio-only';
-        //       $scope.connection.renegotiate(destination.stream, {audio: true, oneway: true});
-        //     });
-        //   });
-        //   reader.readAsArrayBuffer(this.files[0]);
-        // };
       }
     };
   });
