@@ -18,7 +18,7 @@
           var container = $('<div/>', {
             class: 'vid-holder'
           }).append(description.element);
-          container.append($compile('<reactions socket="socket"></reactions>')($scope));
+          //container.append($compile('<reactions socket="socket"></reactions>')($scope));
           $('#video-container').append(container);
         });
         $scope.$on('removeStream', function() {

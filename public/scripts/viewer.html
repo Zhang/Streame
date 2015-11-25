@@ -1,5 +1,6 @@
 <div class="viewer" ng-class="{'is-broadcaster': isBroadcaster}">
   <div ng-if="overlay" ng-click="toggleDisplay('cancel')" class="generic-container-overlay" id="controller-container"></div>
+  <reactions socket="socket"></reactions>
   <main-stream ng-show="displayContent.video" set-id="MAIN_STREAM_ID" socket="socket" on-toggle="toggleDisplay('video', 'attachStream', toggleOn)"></main-stream>
   <video-frame ng-show="displayContent.iframe" set-id="" socket="socket" on-toggle="toggleDisplay('iframe', 'toggleVideo', toggleOn)"></video-frame>
   <image-frame ng-show="displayContent.image" set-id="" socket="socket" on-toggle="toggleDisplay('image', 'toggleImage', toggleOn)"></image-frame>
