@@ -15,7 +15,7 @@
               debug: false,
               callback: function() {
                 var janus = new $Janus({
-                  server: 'http://localhost:8088/janus',
+                  server: 'http://54.183.102.227:8088/janus',
                   success: function() {
                     deferred.resolve(janus);
                   },
