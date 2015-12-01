@@ -18,9 +18,255 @@
       $scope.$dismiss();
     };
   });
-
-  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, SocketManager, $Janus, $q, initedJanus) {
+  app.service('JanusManager', function($stateParams, $cookies) {
     var bandwidth = 1024 * 1024;
+    function logError(err) {
+      console.log(err);
+    }
+
+    return function(janus) {
+      var plugins = [];
+      var videoroom;
+      function addRemoteFeeds(publishers) {
+        if (publishers) {
+          _.each(publishers, function(pub) {
+            newRemoteFeed(pub.id);
+          });
+        }
+      }
+      var manager = {
+        janus: janus,
+        detachAllPlugins: function() {
+          _.each(plugins, function(plugin) {
+            plugin.detach();
+          });
+        },
+        onStream: function() {
+          console.log('on stream not implemented');
+        }
+      };
+      function newRemoteFeed(id) {
+        var remoteFeed;
+        janus.attach({
+          plugin: 'janus.plugin.videoroom',
+          success: function(pluginHandle) {
+            remoteFeed = pluginHandle;
+            plugins.push(pluginHandle);
+            var listen = {
+              request: 'join',
+              room: parseInt($stateParams.channel),
+              ptype: 'listener',
+              feed: id
+            };
+            remoteFeed.send({message: listen});
+          },
+          error: logError,
+          onmessage: function(msg, jsep) {
+            var evt = msg.videoroom;
+            if(evt) {
+              if(evt === 'attached') {
+              } else if (msg.error) {
+                console.log(msg.error);
+              } else {
+                console.log('unknown message', msg);
+              }
+            }
+            if(jsep) {
+              remoteFeed.createAnswer({
+                jsep: jsep,
+                media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
+                success: function(jsep) {
+                  var body = {
+                    request: 'start',
+                    room: 1234
+                  };
+                  remoteFeed.send({
+                    message: body,
+                    jsep: jsep
+                  });
+                },
+                error: logError
+              });
+            }
+          },
+          onremotestream: function(stream) {
+            manager.onStream(stream, null, {id: id});
+          }
+        });
+      }
+      function recordFeed() {
+        var recordplay;
+        janus.attach({
+          plugin: 'janus.plugin.recordplay',
+          success: function(pluginHandle) {
+            recordplay = pluginHandle;
+            plugins.push(pluginHandle);
+
+            recordplay.send({
+              message: {
+                request: 'configure',
+                'video-bitrate-max': bandwidth, // a quarter megabit
+                'video-keyframe-interval': 15000 // 15 seconds
+              }
+            });
+
+            recordplay.createOffer({
+              success: function(jsep) {
+                var body = {
+                  request: 'record',
+                  name: 'scort'
+                };
+
+                recordplay.send({
+                  message: body,
+                  jsep: jsep
+                });
+              },
+              error: logError
+            });
+          },
+          onmessage: function(msg, jsep) {
+            var result = msg.result;
+            var status = _.get(msg, 'result.status');
+            if (status) {
+              if (status === 'preparing') {
+                recordplay.createAnswer({
+                  jsep: jsep,
+                  media: { audioSend: false, videoSend: false },
+                  success: function(jsep) {
+                    var body = {request: 'start'};
+                    recordplay.send({
+                      message: body,
+                      jsep: jsep
+                    });
+                  }
+                });
+              } else if (status === 'recording') {
+                if (jsep) {
+                  recordplay.handleRemoteJsep({jsep: jsep});
+                }
+              } else if (status === 'slow_link') {
+                var uplink = result.uplink;
+                if(uplink !== 0) {
+                  // Janus detected issues when receiving our media, let's slow down
+                  bandwidth = parseInt(bandwidth / 1.5);
+                  recordplay.send({
+                    message: {
+                      request: 'configure',
+                      'video-bitrate-max': bandwidth, // Reduce the bitrate
+                      'video-keyframe-interval': 15000 // Keep the 15 seconds key frame interval
+                    }
+                  });
+                }
+              } else if(status === 'playing') {
+                console.log('playing');
+              } else if (event === 'stopped') {
+                console.log('stopped playing: ', result.id);
+                recordplay.hangup();
+              }
+            }
+          },
+          error: logError
+        });
+      }
+      manager.startVideoRoom = function startVideoRoom() {
+        janus.attach({
+          plugin: 'janus.plugin.videoroom',
+          success: function(pluginHandle) {
+            videoroom = pluginHandle;
+            plugins.push(pluginHandle);
+
+            (function createRoom() {
+              var create = {
+                request: 'create',
+                room: parseInt($stateParams.channel),
+                ptype: 'publisher'
+              };
+              videoroom.send({'message': create});
+            })();
+            (function registerUsername() {
+              var register = {
+                request: 'join',
+                room: parseInt($stateParams.channel),
+                ptype: 'publisher',
+                display: $cookies.get('cookieId')
+              };
+              videoroom.send({'message': register});
+            })();
+          },
+          onmessage: function(msg, jsep) {
+            var evt = msg.videoroom;
+            if (evt === 'joined') {
+              if ($stateParams.isCall) {
+                (function publishOwnFeed() {
+                  videoroom.createOffer({
+                    media: { audioRecv: false, videoRecv: false, audioSend: true, videoSend: true},
+                    success: function(jsep) {
+                      var publish = {
+                        request: 'configure',
+                        audio: true,
+                        video: true
+                      };
+                      videoroom.send({message: publish, jsep: jsep});
+                    },
+                    error: logError
+                  });
+                })();
+                recordFeed();
+              }
+              addRemoteFeeds(msg.publishers);
+            } else if (evt === 'event') {
+              addRemoteFeeds(msg.publishers);
+            }
+            if (jsep) {
+              videoroom.handleRemoteJsep({jsep: jsep});
+            }
+            if (msg.leaving) {
+              $('#' + msg.leaving).remove();
+            }
+          },
+          onlocalstream: function(stream) {
+            manager.onStream(stream, null, {muted: true});
+          }
+        });
+      };
+      manager.viewRecording = function(id) {
+        var recordplay;
+        janus.attach({
+          plugin: 'janus.plugin.recordplay',
+          success: function(pluginHandle) {
+            recordplay = pluginHandle;
+            var play = {request: 'play', id: id};
+            recordplay.send({message: play});
+          },
+          onremotestream: function(stream) {
+            manager.onStream(stream);
+          },
+          onmessage: function(msg, jsep) {
+            var status = _.get(msg, 'result.status');
+            if(status === 'preparing') {
+              recordplay.createAnswer({
+                jsep: jsep,
+                media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
+                success: function(jsep) {
+                  var body = {request: 'start'};
+                  recordplay.send({
+                    message: body,
+                    jsep: jsep
+                  });
+                },
+                error: logError
+              });
+            }
+          },
+          error: logError
+        });
+      };
+
+      return manager;
+    };
+  });
+  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, SocketManager, $Janus, $q, initedJanus, JanusManager) {
     $rootScope.isBroadcaster = $stateParams.isCall;
     var config = {
       path: '/peerjs',
@@ -30,39 +276,18 @@
       config.port = 9000;
     }
     $scope.$on('view', function(e, id) {
+      $scope.viewing = true;
       removeStreams();
-
-      var recordplay;
-      $scope.janus.attach({
-        plugin: 'janus.plugin.recordplay',
-        success: function(pluginHandle) {
-          recordplay = pluginHandle;
-          var play = {request: 'play', id: id};
-          recordplay.send({message: play});
-        },
-        onremotestream: function(stream) {
-          attachStream(stream);
-        },
-        onmessage: function(msg, jsep) {
-          var status = _.get(msg, 'result.status');
-          if(status === 'preparing') {
-            recordplay.createAnswer({
-              jsep: jsep,
-              media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
-              success: function(jsep) {
-                var body = {request: 'start'};
-                recordplay.send({
-                  message: body,
-                  jsep: jsep
-                });
-              },
-              error: logError
-            });
-          }
-        },
-        error: logError
-      });
+      $scope.janusManager.detachAllPlugins();
+      $scope.janusManager.viewRecording(id);
     });
+
+    $scope.cancelViewer = function() {
+      $scope.viewing = false;
+      removeStreams();
+      $scope.janusManager.detachAllPlugins();
+      $scope.janusManager.startVideoRoom();
+    };
 
     $scope.socket = SocketManager.init();
     $scope.MAIN_STREAM_ID = 'video-container';
@@ -71,10 +296,6 @@
       name: 'Caesarofthesky',
       image: 'fonts/scott.jpg'
     };
-
-    function removeStreamById(id) {
-      $(id).remove();
-    }
 
     function removeStreams() {
       $scope.$broadcast('removeStreams');
@@ -103,202 +324,10 @@
       });
     }
 
-    var videoroom;
-    function addRemoteFeeds(publishers) {
-      if (publishers) {
-        _.each(publishers, function(pub) {
-          newRemoteFeed(pub.id);
-        });
-      }
-    }
-    function logError(err) {
-      console.log(err);
-    }
-    $scope.janus = initedJanus;
-    $scope.janus.attach({
-      plugin: 'janus.plugin.videoroom',
-      success: function(pluginHandle) {
-        videoroom = pluginHandle;
-        var create = {
-          request: 'create',
-          room: parseInt($stateParams.channel),
-          ptype: 'publisher'
-        };
-        videoroom.send({'message': create});
-        registerUsername($cookies.get('cookieId'));
-      },
-      onmessage: function(msg, jsep) {
-        console.log(msg);
-        var evt = msg.videoroom;
-        if (evt === 'joined') {
-          if ($stateParams.isCall) {
-            publishOwnFeed();
-            recordFeed();
-          }
-          addRemoteFeeds(msg.publishers);
-        } else if (evt === 'event') {
-          addRemoteFeeds(msg.publishers);
-        }
-        if (jsep) {
-          videoroom.handleRemoteJsep({jsep: jsep});
-        }
-        if (msg.leaving) {
-          removeStreamById('#' + msg.leaving);
-        }
-      },
-      onlocalstream: function(stream) {
-        attachStream(stream, null, {muted: true});
-      }
-    });
-
-    function recordFeed() {
-      var recordplay;
-      $scope.janus.attach({
-        plugin: 'janus.plugin.recordplay',
-        success: function(pluginHandle) {
-          recordplay = pluginHandle;
-
-          recordplay.send({
-            message: {
-              request: 'configure',
-              'video-bitrate-max': bandwidth, // a quarter megabit
-              'video-keyframe-interval': 15000 // 15 seconds
-            }
-          });
-
-          recordplay.createOffer({
-            success: function(jsep) {
-              var body = {
-                request: 'record',
-                name: 'scort'
-              };
-
-              recordplay.send({
-                message: body,
-                jsep: jsep
-              });
-            },
-            error: logError
-          });
-        },
-        onmessage: function(msg, jsep) {
-          var result = msg.result;
-          var status = _.get(msg, 'result.status');
-          if (status) {
-            if (status === 'preparing') {
-              recordplay.createAnswer({
-                jsep: jsep,
-                media: { audioSend: false, videoSend: false },
-                success: function(jsep) {
-                  console.log('sending record');
-                  var body = {request: 'start'};
-                  recordplay.send({
-                    message: body,
-                    jsep: jsep
-                  });
-                }
-              });
-            } else if (status === 'recording') {
-              if (jsep) {
-                recordplay.handleRemoteJsep({jsep: jsep});
-              }
-            } else if (status === 'slow_link') {
-              var uplink = result.uplink;
-              if(uplink !== 0) {
-                // Janus detected issues when receiving our media, let's slow down
-                bandwidth = parseInt(bandwidth / 1.5);
-                recordplay.send({
-                  message: {
-                    request: 'configure',
-                    'video-bitrate-max': bandwidth, // Reduce the bitrate
-                    'video-keyframe-interval': 15000 // Keep the 15 seconds key frame interval
-                  }
-                });
-              }
-            } else if(status === 'playing') {
-              console.log('playing');
-            } else if(event === 'stopped') {
-              console.log('stopped playing: ', result.id);
-              recordplay.hangup();
-            }
-          }
-        },
-        error: logError
-      });
-    }
-
-    function publishOwnFeed() {
-      videoroom.createOffer({
-        media: { audioRecv: false, videoRecv: false, audioSend: true, videoSend: true},
-        success: function(jsep) {
-          var publish = {
-            request: 'configure',
-            audio: true,
-            video: true
-          };
-          videoroom.send({message: publish, jsep: jsep});
-        },
-        error: logError
-      });
-    }
-    function registerUsername(username) {
-      var register = {
-        request: 'join',
-        room: parseInt($stateParams.channel),
-        ptype: 'publisher',
-        display: username
-      };
-      videoroom.send({'message': register});
-    }
-
-    function newRemoteFeed(id) {
-      var remoteFeed;
-      $scope.janus.attach({
-        plugin: 'janus.plugin.videoroom',
-        success: function(pluginHandle) {
-          remoteFeed = pluginHandle;
-          var listen = {
-            request: 'join',
-            room: parseInt($stateParams.channel),
-            ptype: 'listener',
-            feed: id
-          };
-          remoteFeed.send({message: listen});
-        },
-        error: logError,
-        onmessage: function(msg, jsep) {
-          var evt = msg.videoroom;
-          if(evt) {
-            if(evt === 'attached') {
-            } else if (msg.error) {
-              console.log(msg.error);
-            } else {
-              console.log('unknown message', msg);
-            }
-          }
-          if(jsep) {
-            remoteFeed.createAnswer({
-              jsep: jsep,
-              media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
-              success: function(jsep) {
-                var body = {
-                  request: 'start',
-                  room: 1234
-                };
-                remoteFeed.send({
-                  message: body,
-                  jsep: jsep
-                });
-              },
-              error: logError
-            });
-          }
-        },
-        onremotestream: function(stream) {
-          attachStream(stream, null, {id: id});
-        }
-      });
-    }
+    $scope.janusManager = JanusManager(initedJanus);
+    $scope.janus = $scope.janusManager.janus;
+    $scope.janusManager.onStream = attachStream;
+    $scope.janusManager.startVideoRoom();
   });
 
   app.directive('header', function() {

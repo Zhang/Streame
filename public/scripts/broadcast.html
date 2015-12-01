@@ -12,6 +12,7 @@
           With <a class="link">{{user.name || 'Caesarofthesky'}}</a>
         </h4>
       </div>
+      <span class="cancel-viewer action" ng-if="viewing" ng-click="cancelViewer()">Return to Streaming</span>
     </div>
   </div>
   <viewer connection="connection" socket="socket"></viewer>

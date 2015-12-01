@@ -78,6 +78,10 @@ h2 {
   padding: 0px 30px;
   height: 65px;
   line-height: 65px;
+  width: calc(100% - 170px);
+}
+.stream-title-container .cancel-viewer {
+  float: right;
 }
 .stream-title-container .title-padding {
   height: 40px;
