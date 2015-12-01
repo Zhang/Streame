@@ -2,4 +2,7 @@
   <h2 class="info-header">
     Currently Streaming: <input type="text" class="topic-selector" ng-model="topic">
   </h2>
+  <div ng-click="view(recording)" class="recording-container" ng-repeat="recording in recordings.list">
+    <div>{{recording.name}}</div>
+  </div>
 </div>

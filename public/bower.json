@@ -25,6 +25,7 @@
     "lodash": "3.10.1",
     "peerjs": "0.3.14",
     "socket.io-client": "git@github.com:socketio/socket.io-client.git#d125da3c0fb05c9bc958a501b102f73d0e552a72",
-    "webrtc-adapter": "0.2.5"
+    "webrtc-adapter": "0.2.5",
+    "janus": "git@github.com:meetecho/janus-gateway.git#0003df81e94f6a30ea067338a36cb38d206bd8f1"
   }
 }

@@ -15,5 +15,10 @@ body {
   margin: 0;
   min-width: @min-width;
   min-height: @min-height;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }

@@ -5,7 +5,8 @@
     'uuid4',
     'streamit.embeddedViews',
     'ngCookies',
-    'uuid4'
+    'uuid4',
+    'streamit.roomstate'
   ]);
 
   app.controller('ModalInstanceCtrl', function(Type, $scope) {
@@ -18,45 +19,73 @@
     };
   });
 
-  var count = 1;
-  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, socketFactory) {
-    //var PeerConnection = PeerConnectionManager.connection;
+  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, SocketManager, $Janus, $q, initedJanus) {
+    var bandwidth = 1024 * 1024;
+    $rootScope.isBroadcaster = $stateParams.isCall;
     var config = {
       path: '/peerjs',
       host: $cookies.get('host'),
-      wtf: count += 1
     };
     if ($cookies.get('host') === 'localhost') {
       config.port = 9000;
     }
-    var PeerConnection = new Peer(uuid4.generate(), config);
-    $scope.socket = socketFactory({
-      ioSocket: io.connect()
-    });
-    $scope.socket.standardEmit = function(evt, data) {
-      var formattedData = _.merge({
-        peerId: PeerConnection.id,
-        channel: $stateParams.channel,
-        userId: $cookies.get('cookieId')
-      }, data);
-      this.emit(evt, formattedData);
-    };
+    $scope.$on('view', function(e, id) {
+      removeStreams();
 
+      var recordplay;
+      $scope.janus.attach({
+        plugin: 'janus.plugin.recordplay',
+        success: function(pluginHandle) {
+          recordplay = pluginHandle;
+          var play = {request: 'play', id: id};
+          recordplay.send({message: play});
+        },
+        onremotestream: function(stream) {
+          attachStream(stream);
+        },
+        onmessage: function(msg, jsep) {
+          var status = _.get(msg, 'result.status');
+          if(status === 'preparing') {
+            recordplay.createAnswer({
+              jsep: jsep,
+              media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
+              success: function(jsep) {
+                var body = {request: 'start'};
+                recordplay.send({
+                  message: body,
+                  jsep: jsep
+                });
+              },
+              error: logError
+            });
+          }
+        },
+        error: logError
+      });
+    });
+
+    $scope.socket = SocketManager.init();
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.channel = $stateParams.channel;
     $scope.user = {
       name: 'Caesarofthesky',
       image: 'fonts/scott.jpg'
     };
-    function removeStream() {
-      $scope.$broadcast('removeStream');
+
+    function removeStreamById(id) {
+      $(id).remove();
+    }
+
+    function removeStreams() {
+      $scope.$broadcast('removeStreams');
     }
 
     function attachStream(stream, element, opts) {
       element = element || document.createElement('video');
       opts = _.defaults(opts || {}, {
         autoplay: true,
-        muted: false
+        muted: false,
+        id: null
       });
 
       if (opts.autoplay) {
@@ -69,61 +98,207 @@
 
       attachMediaStream(element, stream);
       $scope.$broadcast('attachStream', {
-        element: element
+        element: element,
+        id: opts.id
       });
     }
 
-    $scope.socket.standardEmit('create or join');
-
-    $scope.socket.on('create', function(res) {
-      $rootScope.isBroadcaster = true;
-      navigator.getUserMedia({video: true, audio: true}, function(stream) {
-        attachStream(stream, null, {muted: true});
-        $scope.socket.on('joined', function(msg) {
-          var call = PeerConnection.call(msg.peerId, stream);
+    var videoroom;
+    function addRemoteFeeds(publishers) {
+      if (publishers) {
+        _.each(publishers, function(pub) {
+          newRemoteFeed(pub.id);
+        });
+      }
+    }
+    function logError(err) {
+      console.log(err);
+    }
+    $scope.janus = initedJanus;
+    $scope.janus.attach({
+      plugin: 'janus.plugin.videoroom',
+      success: function(pluginHandle) {
+        videoroom = pluginHandle;
+        var create = {
+          request: 'create',
+          room: parseInt($stateParams.channel),
+          ptype: 'publisher'
+        };
+        videoroom.send({'message': create});
+        registerUsername($cookies.get('cookieId'));
+      },
+      onmessage: function(msg, jsep) {
+        console.log(msg);
+        var evt = msg.videoroom;
+        if (evt === 'joined') {
           if ($stateParams.isCall) {
-            call.on('stream', function(remoteStream) {
-              attachStream(remoteStream);
+            publishOwnFeed();
+            recordFeed();
+          }
+          addRemoteFeeds(msg.publishers);
+        } else if (evt === 'event') {
+          addRemoteFeeds(msg.publishers);
+        }
+        if (jsep) {
+          videoroom.handleRemoteJsep({jsep: jsep});
+        }
+        if (msg.leaving) {
+          removeStreamById('#' + msg.leaving);
+        }
+      },
+      onlocalstream: function(stream) {
+        attachStream(stream, null, {muted: true});
+      }
+    });
+
+    function recordFeed() {
+      var recordplay;
+      $scope.janus.attach({
+        plugin: 'janus.plugin.recordplay',
+        success: function(pluginHandle) {
+          recordplay = pluginHandle;
+
+          recordplay.send({
+            message: {
+              request: 'configure',
+              'video-bitrate-max': bandwidth, // a quarter megabit
+              'video-keyframe-interval': 15000 // 15 seconds
+            }
+          });
+
+          recordplay.createOffer({
+            success: function(jsep) {
+              var body = {
+                request: 'record',
+                name: 'scort'
+              };
+
+              recordplay.send({
+                message: body,
+                jsep: jsep
+              });
+            },
+            error: logError
+          });
+        },
+        onmessage: function(msg, jsep) {
+          var result = msg.result;
+          var status = _.get(msg, 'result.status');
+          if (status) {
+            if (status === 'preparing') {
+              recordplay.createAnswer({
+                jsep: jsep,
+                media: { audioSend: false, videoSend: false },
+                success: function(jsep) {
+                  console.log('sending record');
+                  var body = {request: 'start'};
+                  recordplay.send({
+                    message: body,
+                    jsep: jsep
+                  });
+                }
+              });
+            } else if (status === 'recording') {
+              if (jsep) {
+                recordplay.handleRemoteJsep({jsep: jsep});
+              }
+            } else if (status === 'slow_link') {
+              var uplink = result.uplink;
+              if(uplink !== 0) {
+                // Janus detected issues when receiving our media, let's slow down
+                bandwidth = parseInt(bandwidth / 1.5);
+                recordplay.send({
+                  message: {
+                    request: 'configure',
+                    'video-bitrate-max': bandwidth, // Reduce the bitrate
+                    'video-keyframe-interval': 15000 // Keep the 15 seconds key frame interval
+                  }
+                });
+              }
+            } else if(status === 'playing') {
+              console.log('playing');
+            } else if(event === 'stopped') {
+              console.log('stopped playing: ', result.id);
+              recordplay.hangup();
+            }
+          }
+        },
+        error: logError
+      });
+    }
+
+    function publishOwnFeed() {
+      videoroom.createOffer({
+        media: { audioRecv: false, videoRecv: false, audioSend: true, videoSend: true},
+        success: function(jsep) {
+          var publish = {
+            request: 'configure',
+            audio: true,
+            video: true
+          };
+          videoroom.send({message: publish, jsep: jsep});
+        },
+        error: logError
+      });
+    }
+    function registerUsername(username) {
+      var register = {
+        request: 'join',
+        room: parseInt($stateParams.channel),
+        ptype: 'publisher',
+        display: username
+      };
+      videoroom.send({'message': register});
+    }
+
+    function newRemoteFeed(id) {
+      var remoteFeed;
+      $scope.janus.attach({
+        plugin: 'janus.plugin.videoroom',
+        success: function(pluginHandle) {
+          remoteFeed = pluginHandle;
+          var listen = {
+            request: 'join',
+            room: parseInt($stateParams.channel),
+            ptype: 'listener',
+            feed: id
+          };
+          remoteFeed.send({message: listen});
+        },
+        error: logError,
+        onmessage: function(msg, jsep) {
+          var evt = msg.videoroom;
+          if(evt) {
+            if(evt === 'attached') {
+            } else if (msg.error) {
+              console.log(msg.error);
+            } else {
+              console.log('unknown message', msg);
+            }
+          }
+          if(jsep) {
+            remoteFeed.createAnswer({
+              jsep: jsep,
+              media: { audioSend: false, videoSend: false },  // We want recvonly audio/video
+              success: function(jsep) {
+                var body = {
+                  request: 'start',
+                  room: 1234
+                };
+                remoteFeed.send({
+                  message: body,
+                  jsep: jsep
+                });
+              },
+              error: logError
             });
           }
-        });
-        if (res.isReconnection) {
-          $scope.socket.standardEmit('reconnected');
+        },
+        onremotestream: function(stream) {
+          attachStream(stream, null, {id: id});
         }
-      }, function(err) {
-        console.log('Failed to get local stream', err);
       });
-    });
-
-    $scope.socket.on('join', function(data) {
-      $rootScope.isBroadcaster = $stateParams.isCall;
-      PeerConnection.on('call', function(call) {
-        if ($stateParams.isCall) {
-          navigator.getUserMedia({video: true, audio: true}, function(stream) {
-            attachStream(stream, null, {muted: true});
-            call.answer(stream);
-          }, function(err) {
-            console.log('Failed to get local stream', err);
-          });
-        } else {
-          call.answer();
-        }
-        call.on('stream', function(remoteStream) {
-          attachStream(remoteStream);
-        });
-      });
-      $scope.socket.standardEmit('add peer');
-    });
-
-    $scope.socket.on('reconnected', function(room) {
-      if (room !== $stateParams.channel) return;
-      removeStream();
-      $scope.socket.standardEmit('add peer');
-    });
-
-    $scope.$on('$destroy' , function() {
-      PeerConnection.destroy();
-    });
+    }
   });
 
   app.directive('header', function() {
@@ -138,8 +313,8 @@
       replace: true,
       templateUrl: 'scripts/footer.html',
       scope: {
-        socket: '=',
-        connection: '='
+        connection: '=',
+        socket: '='
       },
       link: function($scope) {
         $scope.add = false;
@@ -207,10 +382,31 @@
   app.directive('additionalInfo', function() {
     return {
       scope: {
+        janus: '='
       },
       templateUrl: 'scripts/additionalInfo.html',
       link: function($scope) {
         $scope.topic = 'Guinea pig merits';
+        $scope.recordings = {
+          list: []
+        };
+
+        $scope.view = function(recording) {
+          $scope.$emit('view', recording.id);
+        };
+
+        $scope.janus.attach({
+          plugin: 'janus.plugin.recordplay',
+          success: function getVideos(pluginHandle) {
+            pluginHandle.send({
+              message: {request: 'list'},
+              success: function(res) {
+                angular.copy(res.list, $scope.recordings.list);
+                $scope.$digest();
+              }
+            });
+          }
+        });
       }
     };
   });
@@ -218,8 +414,7 @@
   app.directive('viewer', function($rootScope) {
     return {
       scope: {
-        socket: '=',
-        connection: '='
+        socket: '='
       },
       replace: true,
       templateUrl: 'scripts/viewer.html',
@@ -278,18 +473,22 @@
       templateUrl: 'scripts/chat.html',
       replace: true,
       restrict: 'E',
-      link: function($scope, elem) {
+      link: function($scope) {
         $scope.chats = [];
+        $scope.text = {
+          input: ''
+        };
+
         var username = ['bliggybloff', 'bb', 'guineaPigz', 'bLiners', 'MoshiMoshi', 'Gogurt Cop', 'Most Wise Tooth'][Math.floor(Math.random() * 7)];
         $scope.socket.on('chat-received', function(chat) {
           $scope.chats.push(chat);
         });
-        $('#chat-text').keypress(function(e) {
-          if (e.which === 13) {
-            e.preventDefault();
-            var text = $('#chat-text').val();
-            $('#chat-text').val('');
-            $scope.socket.standardEmit('chat-sent', {text: text, username: username});
+
+        $('#chat-text').keypress(function submitChat(e) {
+          var ENTER_KEY = 13;
+          if (e.which === ENTER_KEY) {
+            $scope.socket.standardEmit('chat-sent', {text: $scope.text.input, username: username});
+            $scope.text.input = '';
           }
         });
       }

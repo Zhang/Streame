@@ -54,7 +54,8 @@ module.exports = function (grunt) {
               '<%= paths.bower %>/angular-uuid4/angular-uuid4.js',
               '<%= paths.bower %>/webrtc-adapter/adapter.js',
               '<%= paths.bower %>/angular-cookies/angular-cookies.js',
-              '<%= paths.bower %>/angular-bootstrap/ui-bootstrap-tpls.js'
+              '<%= paths.bower %>/angular-bootstrap/ui-bootstrap-tpls.js',
+              '<%= paths.bower %>/janus/html/janus.js',
             ],
             app: '<%= paths.public %>/scripts/**/*.js',
           },

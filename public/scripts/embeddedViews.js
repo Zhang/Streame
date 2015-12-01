@@ -3,7 +3,7 @@
 (function() {
   var app = angular.module('streamit.embeddedViews', []);
 
-  app.directive('mainStream', function($compile) {
+  app.directive('mainStream', function() {
     return {
       replace: true,
       templateUrl: 'scripts/mainStream.html',
@@ -16,13 +16,13 @@
         $scope.streams = [];
         $scope.$on('attachStream', function(e, description) {
           var container = $('<div/>', {
-            class: 'vid-holder'
+            class: 'vid-holder',
+            id: description.id
           }).append(description.element);
-          //container.append($compile('<reactions socket="socket"></reactions>')($scope));
           $('#video-container').append(container);
         });
-        $scope.$on('removeStream', function() {
-          $scope.streams.splice(0, $scope.streams.length - 1);
+        $scope.$on('removeStreams', function() {
+          elem.empty();
         });
         elem.attr('id', $scope.setId);
       }

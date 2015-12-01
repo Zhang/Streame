@@ -227,6 +227,12 @@ h2 {
 }
 .additional-info {
   padding: 10px 30px;
+  width: calc(100% - 170px);
+}
+.additional-info .recording-container {
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #d2d2d2;
 }
 .additional-info .info-header {
   font-size: 20px;
@@ -304,7 +310,7 @@ h2 {
   right: 0;
   width: 170px;
   bottom: 0;
-  position: absolute;
+  position: fixed;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -407,5 +413,9 @@ body {
   margin: 0;
   min-width: 650px;
   min-height: 400px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+body::-webkit-scrollbar {
+  display: none;
 }
