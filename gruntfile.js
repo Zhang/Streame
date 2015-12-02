@@ -103,7 +103,7 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'development',
-            janusServer: 'http:;//localhost:8088'
+            janusServer: 'http://localhost:8088/janus'
           }
         }
       },
@@ -114,7 +114,7 @@ module.exports = function (grunt) {
         constants: {
           ENV: {
             name: 'production',
-            janusServer: 'ec2-54-183-102-227.us-west-1.compute.amazonaws.com:8088'
+            janusServer: 'ec2-54-183-102-227.us-west-1.compute.amazonaws.com:8088/janus'
           }
         }
       }

@@ -13,6 +13,8 @@
         </h4>
       </div>
       <span class="cancel-viewer action" ng-if="viewing" ng-click="cancelViewer()">Return to Streaming</span>
+      <span class="cancel-viewer action" ng-if="!viewing && !recording" ng-click="recordStream()">Begin Recording</span>
+      <span class="cancel-viewer action" ng-if="!viewing && recording" ng-click="stopRecording()">Stop Recording</span>
     </div>
   </div>
   <viewer connection="connection" socket="socket"></viewer>

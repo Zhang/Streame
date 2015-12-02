@@ -37,8 +37,13 @@
       var manager = {
         janus: janus,
         detachAllPlugins: function() {
-          _.each(plugins, function(plugin) {
-            plugin.detach();
+          _.each(plugins, function(p) {
+            p.plugin.detach();
+          });
+        },
+        stopRecording: function() {
+          _.each(plugins, function(p) {
+            if (p.type === 'recording') return p.plugin.detach();
           });
         },
         onStream: function() {
@@ -51,7 +56,10 @@
           plugin: 'janus.plugin.videoroom',
           success: function(pluginHandle) {
             remoteFeed = pluginHandle;
-            plugins.push(pluginHandle);
+            plugins.push({
+              plugin: pluginHandle,
+              type: 'remoteFeed'
+            });
             var listen = {
               request: 'join',
               room: parseInt($stateParams.channel),
@@ -94,13 +102,16 @@
           }
         });
       }
-      function recordFeed() {
+      manager.recordFeed = function recordFeed() {
         var recordplay;
         janus.attach({
           plugin: 'janus.plugin.recordplay',
           success: function(pluginHandle) {
             recordplay = pluginHandle;
-            plugins.push(pluginHandle);
+            plugins.push({
+              plugin: pluginHandle,
+              type: 'recording'
+            });
 
             recordplay.send({
               message: {
@@ -168,13 +179,16 @@
           },
           error: logError
         });
-      }
+      };
       manager.startVideoRoom = function startVideoRoom() {
         janus.attach({
           plugin: 'janus.plugin.videoroom',
           success: function(pluginHandle) {
             videoroom = pluginHandle;
-            plugins.push(pluginHandle);
+            plugins.push({
+              plugin: pluginHandle,
+              type: 'videoroom'
+            });
 
             (function createRoom() {
               var create = {
@@ -212,7 +226,6 @@
                     error: logError
                   });
                 })();
-                recordFeed();
               }
               addRemoteFeeds(msg.publishers);
             } else if (evt === 'event') {
@@ -266,6 +279,7 @@
       return manager;
     };
   });
+
   app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, SocketManager, $Janus, $q, initedJanus, JanusManager) {
     $rootScope.isBroadcaster = $stateParams.isCall;
     var config = {
@@ -282,6 +296,14 @@
       $scope.janusManager.viewRecording(id);
     });
 
+    $scope.recordStream = function() {
+      $scope.recording = true;
+      $scope.janusManager.recordFeed();
+    };
+    $scope.stopRecording = function() {
+      $scope.recording = false;
+      $scope.janusManager.stopRecording();
+    };
     $scope.cancelViewer = function() {
       $scope.viewing = false;
       removeStreams();
