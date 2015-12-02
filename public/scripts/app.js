@@ -6,7 +6,8 @@
     'ui.router',
     'ui.bootstrap',
     'streamit.router',
-    'streamit.broadcast'
+    'streamit.broadcast',
+    'config'
   ]);
 
   app.run(function($state) {

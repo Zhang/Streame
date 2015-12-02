@@ -9,13 +9,13 @@
         templateUrl: 'scripts/broadcast.html',
         controller: 'BroadcastController',
         resolve: {
-          initedJanus: function($Janus, $q) {
+          initedJanus: function($Janus, $q, ENV) {
             var deferred = $q.defer();
             $Janus.init({
               debug: false,
               callback: function() {
                 var janus = new $Janus({
-                  server: 'http://localhost:8088/janus',
+                  server: ENV.janusServer,
                   success: function() {
                     console.log(arguments);
                     deferred.resolve(janus);

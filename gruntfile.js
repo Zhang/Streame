@@ -8,12 +8,14 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-html-build');
   grunt.loadNpmTasks('grunt-contrib-less');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-ng-constant');
 
   grunt.initConfig({
     paths: {
       public: 'public',
       less: 'public/less',
-      bower: 'public/vendor'
+      bower: 'public/vendor',
+      scripts: 'public/scripts'
     },
     jshint: {
       options: {
@@ -86,6 +88,37 @@ module.exports = function (grunt) {
         tasks: ['htmlbuild']
       }
     },
+    ngconstant: {
+      // Options for all targets
+      options: {
+        space: '  ',
+        wrap: '"use strict";\n\n {%= __ngModule %}',
+        name: 'config',
+      },
+      // Environment targets
+      development: {
+        options: {
+          dest: '<%= paths.scripts %>/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'development',
+            janusServer: 'http:;//localhost:8088'
+          }
+        }
+      },
+      production: {
+        options: {
+          dest: '<%= paths.scripts %>/config.js'
+        },
+        constants: {
+          ENV: {
+            name: 'production',
+            janusServer: 'ec2-54-183-102-227.us-west-1.compute.amazonaws.com:8088'
+          }
+        }
+      }
+    }
   });
 
 };
