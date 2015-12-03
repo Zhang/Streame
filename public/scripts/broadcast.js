@@ -412,7 +412,7 @@
 
             if (socketEvent === 'toggleVideo') {
               var youtubeMatches = url.match(/embed\/(.*)/i) || url.match(/v=(.*?)&/i) || url.match(/v=(.*)/i);
-              var queries = url.match(/t=(.*)/) || '';
+              var queries = url.match(/start=(.*)/) || url.match(/t=(.*)/) || '';
               var youtubeVideoCode = youtubeMatches[1];
               thumbnailUrl = 'http://img.youtube.com/vi/' + youtubeVideoCode + '/0.jpg';
               url = 'https://www.youtube.com/embed/' + youtubeVideoCode + '?autoplay=1&' + queries[0];
