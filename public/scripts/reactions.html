@@ -1,5 +1,8 @@
-<div>
-  <div class="react-overlay">
-    <input id="react-comment" type="text"/>
+<div class="react-overlay">
+  <div class="react-container">
+    <div class="comments-container">
+      <div class="comment-container" ng-repeat="comment in comments"><span class="comment-username">{{comment.user}}</span> : {{comment.text}}</div>
+    </div>
+    <input id="react-comment" placeholder="Say Something..." type="text"/>
   </div>
 </div>

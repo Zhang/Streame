@@ -2,10 +2,8 @@
 
 (function() {
   var app = angular.module('streamit.broadcast', [
-    'uuid4',
     'streamit.embeddedViews',
     'ngCookies',
-    'uuid4',
     'streamit.roomstate'
   ]);
 
@@ -280,7 +278,7 @@
     };
   });
 
-  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, uuid4, $cookies, SocketManager, $Janus, $q, initedJanus, JanusManager) {
+  app.controller('BroadcastController', function($scope, $rootScope, $stateParams, $cookies, SocketManager, $Janus, $q, initedJanus, JanusManager) {
     $rootScope.isBroadcaster = $stateParams.isCall;
     var config = {
       path: '/peerjs',
@@ -433,14 +431,28 @@
   app.directive('additionalInfo', function() {
     return {
       scope: {
-        janus: '='
+        janus: '=',
+        socket: '='
       },
       templateUrl: 'scripts/additionalInfo.html',
       link: function($scope) {
-        $scope.topic = 'Guinea pig merits';
+        $scope.topic = {
+          text: 'Guinea pig merits'
+        };
         $scope.recordings = {
           list: []
         };
+
+        $scope.$watch('topic.text', function(newVal) {
+          if (newVal === $scope.topic) return;
+          $scope.socket.standardEmit('topicChange', {
+            newTopic: newVal
+          });
+        });
+
+        $scope.socket.on('topicChange', function(msg) {
+          $scope.topic.text = msg.newTopic;
+        });
 
         $scope.view = function(recording) {
           $scope.$emit('view', recording.id);
@@ -516,7 +528,7 @@
     };
   });
 
-  app.directive('chat', function() {
+  app.directive('chat', function(CurrentUser) {
     return {
       scope: {
         socket: '='
@@ -530,7 +542,6 @@
           input: ''
         };
 
-        var username = ['bliggybloff', 'bb', 'guineaPigz', 'bLiners', 'MoshiMoshi', 'Gogurt Cop', 'Most Wise Tooth'][Math.floor(Math.random() * 7)];
         $scope.socket.on('chat-received', function(chat) {
           $scope.chats.push(chat);
         });
@@ -538,7 +549,9 @@
         $('#chat-text').keypress(function submitChat(e) {
           var ENTER_KEY = 13;
           if (e.which === ENTER_KEY) {
-            $scope.socket.standardEmit('chat-sent', {text: $scope.text.input, username: username});
+            e.preventDefault();
+            if (_.isEmpty($scope.text.input)) return;
+            $scope.socket.standardEmit('chat-sent', {text: $scope.text.input, username: CurrentUser.username});
             $scope.text.input = '';
           }
         });

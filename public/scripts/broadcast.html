@@ -9,17 +9,19 @@
           {{channel || 'Scott'}} Stream
         </h2>
         <h4>
-          With <a class="link">{{user.name || 'Caesarofthesky'}}</a>
+          With <a class="link action">{{user.name || 'Caesarofthesky'}}</a>
         </h4>
       </div>
-      <span class="cancel-viewer action" ng-if="viewing" ng-click="cancelViewer()">Return to Streaming</span>
-      <span class="cancel-viewer action" ng-if="!viewing && !recording" ng-click="recordStream()">Begin Recording</span>
-      <span class="cancel-viewer action" ng-if="!viewing && recording" ng-click="stopRecording()">Stop Recording</span>
+      <div class="recorder-container">
+        <span class="cancel-viewer action" ng-if="viewing" ng-click="cancelViewer()">Return to Streaming</span>
+        <span class="cancel-viewer action" ng-if="!viewing && !recording" ng-click="recordStream()">Begin Recording</span>
+        <span class="cancel-viewer action" ng-if="!viewing && recording" ng-click="stopRecording()">Stop Recording</span>
+      </div>
     </div>
   </div>
   <viewer connection="connection" socket="socket"></viewer>
   <persist ng-if="!isBroadcaster"></persist>
-  <additional-info janus="janus"></additional-info>
-  <chat socket="socket"></chat>
+  <additional-info socket="socket" janus="janus"></additional-info>
+  <!-- <chat socket="socket"></chat> -->
   <footer ng-if="isBroadcaster" socket="socket" connection="connection"></footer>
 </div>

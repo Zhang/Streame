@@ -30,6 +30,11 @@
       }
     };
   }]);
+  app.factory('CurrentUser', function() {
+    return {
+      username: ['bliggybloff', 'bb', 'guineaPigz', 'bLiners', 'MoshiMoshi', 'Gogurt Cop', 'Most Wise Tooth'][Math.floor(Math.random() * 7)]
+    };
+  });
   app.factory('$Janus', function() {
     return Janus;
   });

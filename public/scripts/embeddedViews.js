@@ -1,7 +1,7 @@
 'use strict';
 
 (function() {
-  var app = angular.module('streamit.embeddedViews', []);
+  var app = angular.module('streamit.embeddedViews', ['uuid4']);
 
   app.directive('mainStream', function() {
     return {
@@ -103,14 +103,15 @@
     };
   });
 
-  app.directive('reactions', function($timeout) {
+  app.directive('reactions', function($timeout, uuid4, CurrentUser) {
     return {
       scope: {
         socket: '='
       },
       restrict: 'E',
       templateUrl: 'scripts/reactions.html',
-      link: function($scope, el) {
+      link: function($scope) {
+        $scope.comments = [];
         var sendMsg = _.throttle(
           function() {
             var text = $('#react-comment').val();
@@ -129,15 +130,14 @@
         });
 
         $scope.socket.on('comment added', function(msg) {
-          var commentContainer = $('<span/>', {
+          $scope.comments.push({
+            user: CurrentUser.username,
             text: msg.text,
-            class: 'comment'
+            id: uuid4.generate()
           });
-          commentContainer.css('top', Math.floor(Math.random() * 90) + '%');
-          commentContainer.css('right', Math.floor(Math.random() * 90) + '%');
-          el.append(commentContainer);
+
           $timeout(function() {
-            commentContainer.remove();
+            $scope.comments.splice(0, 1);
           }, 3000);
         });
       }

@@ -12,6 +12,9 @@ module.exports = function(app) {
     socket.on('toggleVideo', function(msg) {
       io.sockets.in(msg.channel).emit('toggleVideo', msg);
     });
+    socket.on('topicChange', function(msg) {
+      io.sockets.in(msg.channel).emit('topicChange', msg);
+    });
     socket.on('add comment', function(msg) {
       io.sockets.in(msg.channel).emit('comment added', msg);
     });
