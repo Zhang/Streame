@@ -361,7 +361,7 @@
   app.directive('header', function() {
     return {
       replace: true,
-      template: '<div class="header"><h2 class="title-text">Stream Me - Under Developement</h2></div>'
+      template: '<div class="header"><h2 class="title-text">Phantie - Demo</h2></div>'
     };
   });
 

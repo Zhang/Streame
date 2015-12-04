@@ -116,7 +116,7 @@
           function() {
             if (!$('#react-comment').val()) return;
             var text = $('#react-comment').val();
-            $scope.socket.standardEmit('add comment', {text: text});
+            $scope.socket.standardEmit('add comment', {text: text, username: CurrentUser.username});
             $('#react-comment').val('');
           },
           1000,
@@ -132,7 +132,7 @@
 
         $scope.socket.on('comment added', function(msg) {
           $scope.comments.push({
-            user: CurrentUser.username,
+            user: msg.username,
             text: msg.text,
             id: uuid4.generate()
           });
