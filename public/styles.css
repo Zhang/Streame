@@ -357,12 +357,12 @@ h2 {
   font-size: 10px;
 }
 .footer-container .footer-contents {
-  width: 70%;
+  width: calc(100% - 20%);
   display: inline-block;
 }
 .footer-container .footer-type {
   display: inline-block;
-  width: 30%;
+  width: 20%;
   vertical-align: top;
   height: calc(50px + 15px);
 }

@@ -35,6 +35,7 @@
 .footer-container {
   @content-height: 50px;
   @title-height: 15px;
+  @type-width: 20%;
   width: calc(@footer-width ~"*" 0.8);
   color: white;
   background-color: white;
@@ -42,12 +43,12 @@
   font-size: 10px;
 
   .footer-contents {
-    width: 70%;
+    width: calc(100% ~"-" @type-width);
     display: inline-block;
   }
   .footer-type {
     display: inline-block;
-    width: 30%;
+    width: @type-width;
     vertical-align: top;
     height: calc(@content-height ~"+" @title-height);
     &.toggleVideo {
