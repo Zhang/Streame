@@ -219,15 +219,14 @@ h2 {
   width: 100%;
   margin-top: 8px;
 }
-.content-table .round {
+.content-table .square {
+  margin: 0 auto;
   cursor: pointer;
   display: inline-block;
   height: 30px;
   width: 30px;
-  background-color: #D2D2D2;
+  background-color: #F4F0F0;
   border: 1px solid #D2D2D2;
-  margin: 0 3px;
-  border-radius: 30px;
   background-size: 75%;
 }
 .youtube {
@@ -287,12 +286,6 @@ h2 {
 }
 .scream {
   background-image: url('fonts/scream_cat.png');
-}
-.round {
-  height: 20px;
-  width: 20px;
-  border-radius: 20px;
-  margin: 0 auto;
 }
 .reaction-count {
   color: white;
@@ -383,18 +376,21 @@ h2 {
   background-color: #85bf25;
 }
 .footer-container .remove-additional {
-  width: 30%;
+  width: 15px;
   position: absolute;
+  height: 15px;
+  padding: 2px;
   top: 0;
-  bottom: 0;
   font-weight: bold;
 }
 .footer-container .remove-additional .remove {
   background-image: url('/fonts/delete.png');
+  height: 100%;
+  width: 100%;
+  display: block;
 }
 .footer-container .remove-additional:hover {
-  color: white;
-  background-color: #614471;
+  background-color: red;
 }
 .footer-container .additional-title {
   background-color: white;
@@ -409,6 +405,11 @@ h2 {
 }
 .fade-on-hover:hover {
   opacity: .7;
+}
+.square {
+  height: 20px;
+  width: 20px;
+  display: block;
 }
 .is-broadcaster .chat-container {
   bottom: 0;

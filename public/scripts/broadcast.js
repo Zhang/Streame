@@ -426,7 +426,7 @@
               var type = res.type === 'gif' ? '.webm' : '.jpg';
               var imgurCode = url.match(/gallery\/(.*)/i) || url.match(/\/(.*?).webm/i) || url.match(/\/(.*?).gifv/i) || url.match(/\/(.*?).gif/i) || url.match(/\/(.*?).jpg/i) || (/\/(.*?).png/i);
               url = 'https://i.imgur.com/' + imgurCode[1] + type;
-              thumbnailUrl = url;
+              thumbnailUrl = 'https://i.imgur.com/' + imgurCode[1] + '.jpg';
             }
 
             addMedia(url, res.title, thumbnailUrl, socketEvent);
