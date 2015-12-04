@@ -10,10 +10,10 @@
     'config'
   ]);
 
-  app.run(function($state) {
+  app.run(function() {
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    $state.go('broadcast');
   });
+
   app.directive('ngScrollBottom', ['$timeout', function ($timeout) {
     return {
       scope: {

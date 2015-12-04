@@ -328,10 +328,6 @@ h2 {
 }
 .is-broadcaster .footer {
   top: 0;
-  height: calc(100% - 40px);
-}
-.footer {
-  height: calc(100% - 40px);
 }
 .footer,
 .chat-container {
@@ -362,16 +358,39 @@ h2 {
 }
 .footer-container {
   width: calc(170px * 0.8);
-  height: 100px;
-  border-radius: 5px;
-  background-size: 100%;
   color: white;
   background-color: white;
+  color: #614471;
+  font-size: 10px;
+}
+.footer-container .footer-contents {
+  width: 70%;
+  display: inline-block;
+}
+.footer-container .footer-type {
+  display: inline-block;
+  width: 30%;
+  vertical-align: top;
+  height: calc(50px + 15px);
+}
+.footer-container .footer-type.toggleVideo {
+  background-color: #c4302b;
+}
+.footer-container .footer-type.toggleImage {
+  background-color: #4E76C9;
+}
+.footer-container .footer-type.toggleGif {
+  background-color: #85bf25;
 }
 .footer-container .remove-additional {
-  border-radius: 20px;
-  width: 20px;
+  width: 30%;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   font-weight: bold;
+}
+.footer-container .remove-additional .remove {
+  background-image: url('/fonts/delete.png');
 }
 .footer-container .remove-additional:hover {
   color: white;
@@ -381,10 +400,12 @@ h2 {
   background-color: white;
   color: #614471;
   font-weight: bold;
-  width: 100%;
-  position: absolute;
-  bottom: 0;
-  opacity: 0.9;
+  height: 50px;
+  background-size: 100%;
+  background-position: center;
+}
+.footer-container .footer-title {
+  height: 15px;
 }
 .fade-on-hover:hover {
   opacity: .7;

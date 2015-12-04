@@ -17,7 +17,6 @@
                 var janus = new $Janus({
                   server: ENV.janusServer,
                   success: function() {
-                    console.log(arguments);
                     deferred.resolve(janus);
                   },
                   error: function() {

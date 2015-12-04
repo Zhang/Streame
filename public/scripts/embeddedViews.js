@@ -114,6 +114,7 @@
         $scope.comments = [];
         var sendMsg = _.throttle(
           function() {
+            if (!$('#react-comment').val()) return;
             var text = $('#react-comment').val();
             $scope.socket.standardEmit('add comment', {text: text});
             $('#react-comment').val('');

@@ -17,6 +17,11 @@
     };
   });
   app.service('JanusManager', function($stateParams, $cookies) {
+    var channelToInt = (function strToInt() {
+      return _.reduce($stateParams.channel, function(total, letter) {
+        return '' + total + letter.charCodeAt();
+      }, '');
+    })();
     var bandwidth = 1024 * 1024;
     function logError(err) {
       console.log(err);
@@ -60,7 +65,7 @@
             });
             var listen = {
               request: 'join',
-              room: parseInt($stateParams.channel),
+              room: parseInt(channelToInt),
               ptype: 'listener',
               feed: id
             };
@@ -191,7 +196,7 @@
             (function createRoom() {
               var create = {
                 request: 'create',
-                room: parseInt($stateParams.channel),
+                room: parseInt(channelToInt),
                 ptype: 'publisher'
               };
               videoroom.send({'message': create});
@@ -199,7 +204,7 @@
             (function registerUsername() {
               var register = {
                 request: 'join',
-                room: parseInt($stateParams.channel),
+                room: parseInt(channelToInt),
                 ptype: 'publisher',
                 display: $cookies.get('cookieId')
               };
@@ -313,8 +318,8 @@
     $scope.MAIN_STREAM_ID = 'video-container';
     $scope.channel = $stateParams.channel;
     $scope.user = {
-      name: 'Caesarofthesky',
-      image: 'fonts/scott.jpg'
+      name: 'National Ave',
+      image: 'fonts/nationalave.png'
     };
 
     function removeStreams() {
@@ -348,6 +353,9 @@
     $scope.janus = $scope.janusManager.janus;
     $scope.janusManager.onStream = attachStream;
     $scope.janusManager.startVideoRoom();
+    $scope.$on('$destroy', function() {
+      $scope.janusManager.detachAllPlugins();
+    });
   });
 
   app.directive('header', function() {
