@@ -360,20 +360,29 @@ h2 {
   width: calc(100% - 20%);
   display: inline-block;
 }
+.footer-container.toggleVideo {
+  border: 1px solid #c4302b;
+}
+.footer-container.toggleVideo .footer-type {
+  background-color: #c4302b;
+}
+.footer-container.toggleImage {
+  border: 1px solid #4e76c9;
+}
+.footer-container.toggleImage .footer-type {
+  background-color: #4e76c9;
+}
+.footer-container.toggleGif {
+  border: 1px solid #85bf25;
+}
+.footer-container.toggleGif .footer-type {
+  background-color: #85bf25;
+}
 .footer-container .footer-type {
   display: inline-block;
   width: 20%;
   vertical-align: top;
   height: calc(50px + 15px);
-}
-.footer-container .footer-type.toggleVideo {
-  background-color: #c4302b;
-}
-.footer-container .footer-type.toggleImage {
-  background-color: #4E76C9;
-}
-.footer-container .footer-type.toggleGif {
-  background-color: #85bf25;
 }
 .footer-container .remove-additional {
   width: 15px;

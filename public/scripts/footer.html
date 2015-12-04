@@ -15,9 +15,9 @@
       </tr>
     </table>
   </div>
-  <div class="footer-common footer-container action fade-on-hover" ng-click="media.toggle()" ng-repeat="media in mediaForms">
+  <div class="footer-common {{media.type}} footer-container action fade-on-hover" ng-click="media.toggle()" ng-repeat="media in mediaForms">
     <div class="remove-additional" ng-click="remove($index)"><span class="remove icon"></span></div>
-    <div class="footer-type {{media.type}}"></div
+    <div class="footer-type"></div
     ><div class="footer-contents">
       <div ng-style="{'background-image':'url({{media.thumbnailUrl}})'}" class="additional-title"></div
       ><div class="footer-title">{{media.title}}</div>
